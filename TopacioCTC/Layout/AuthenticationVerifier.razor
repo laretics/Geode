@@ -1,0 +1,23 @@
+﻿@if(inSession)
+{
+    @ChildContent
+}
+else
+{
+    <h3>El recurso que está intentando ver no está disponible</h3>   
+    <h4>Pruebe introduciendo otras credenciales</h4>
+}
+@code {
+    private bool inSession;
+    [Parameter]
+    public RenderFragment ChildContent{ get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        inSession = await AuthService.isSessionOpen();
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        inSession = await AuthService.isSessionOpen();
+    }
+}

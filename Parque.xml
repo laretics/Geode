@@ -1,0 +1,554 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- 06-04-2025 -->
+<mtfComm title="Parque vaporista de Mallorca" version ="1.1" hversion="1.5">
+	<topology>
+		<!-- Signals-->
+		<signal id="1" name="A2" x="40" y="90" shunt="false" orientation ="east"/>
+		<signal id="2" name="A1" x="40" y="200" shunt="false" orientation ="east"/>
+
+		<signal id="3" name="E2" x="180" y="90" shunt="true" orientation ="east"/>
+		<signal id="4" name="E1" x="180" y="200" shunt="true" orientation ="east"/>
+
+		<signal id="5" name="S1" x="608" y="200" shunt="false" orientation="east"/>
+		<signal id="6" name="S2" x="608" y="175" shunt="false" orientation="east"/>
+		<signal id="7" name="S3" x="608" y="150" shunt="false" orientation="east"/>
+		<signal id="8" name="S4" x="608" y="125" shunt="false" orientation="east"/>
+		<signal id="9" name="I1" x="608" y="90" shunt="false" orientation="east"/>
+		<!-- Sections-->
+		<section id="1" name="C01" x="10" y="80">
+			<traces>
+				<v id="0">
+					<active>
+						<tr x1="0" y1="0" x2="80" y2="0"/>
+						<tr x1="90" y1="0" x2="160" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<section id="2" name="C02" x="10" y="190">
+			<traces>
+				<v id="0">
+					<active>
+						<tr x1="0" y1="0" x2="80" y2="0"/>
+						<tr x1="90" y1="0" x2="160" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<crossing x="95" y="135" l="150" id="1" name="PN1" orientation="north"/>
+		<section id="3" name="C03" x="175" y="80">
+			<frogs>
+				<frog x="40" y="-3" w="7" h="7" />
+				<frog x="130" y="57" w="7" h="7" />
+			</frogs>
+			<traces>
+				<v id="0">
+					<inactive>
+						<tr x1="65" y1="10" x2="110" y2="60"/>
+						<tr x1="109" y1="60" x2="128" y2="60"/>
+						<tr x1="139" y1="60" x2="220" y2="60"/>
+						<tr x1="155" y1="50" x2="170" y2="35"/>
+						<tr x1="169" y1="35" x2="220" y2="35"/>
+					</inactive>
+					<active>
+						<tr x1="0" y1="0" x2="38" y2="0"/>
+						<tr x1="49" y1="0" x2="220" y2="0"/>						
+					</active>
+				</v>
+				<v id="1">
+					<inactive>
+						<tr x1="69" y1="0" x2="220" y2="0"/>
+						<tr x1="155" y1="50" x2="170" y2="35"/>
+						<tr x1="169" y1="35" x2="220" y2="35"/>
+					</inactive>
+					<active>
+						<tr x1="0" y1="0" x2="38" y2="0"/>
+						<tr x1="49" y1="0" x2="56" y2="0"/>
+						<tr x1="55" y1="0" x2="110" y2="60"/>
+						<tr x1="109" y1="60" x2="128" y2="60"/>
+						<tr x1="139" y1="60" x2="220" y2="60"/>
+					</active>
+				</v>
+				<v id="2">
+					<inactive>
+						<tr x1="69" y1="0" x2="220" y2="0"/>
+						<tr x1="159" y1="60" x2="220" y2="60"/>
+					</inactive>
+					<active>
+						<tr x1="0" y1="0" x2="38" y2="0"/>
+						<tr x1="49" y1="0" x2="56" y2="0"/>
+						<tr x1="55" y1="0" x2="110" y2="60"/>
+						<tr x1="109" y1="60" x2="128" y2="60"/>
+						<tr x1="139" y1="60" x2="146" y2="60"/>
+						<tr x1="145" y1="60" x2="170" y2="35"/>
+						<tr x1="169" y1="35" x2="220" y2="35"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<section id="4" name="C04" x="175" y="190">
+			<frogs>
+				<frog x="130" y="-3" w="7" h="7"/>				
+			</frogs>
+			<traces>
+				<v id="0">
+					<inactive>
+						<tr x1="155" y1="-10" x2="170" y2="-25"/>
+						<tr x1="169" y1="-25" x2="220" y2="-25"/>
+					</inactive>
+					<active>
+						<tr x1="0" y1="0" x2="128" y2="0"/>
+						<tr x1="139" y1="0" x2="220" y2="0"/>
+					</active>
+				</v>
+				<v id="1">
+					<inactive>
+						<tr x1="159" y1="0" x2="220" y2="0"/>
+					</inactive>
+					<active>
+						<tr x1="0" y1="0" x2="128" y2="0"/>
+						<tr x1="139" y1="0" x2="146" y2="0"/>
+						<tr x1="145" y1="0" x2="170" y2="-25"/>
+						<tr x1="169" y1="-25" x2="220" y2="-25"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<section id="5" name="M4" x="400" y="115">
+			<traces>
+				<v id="0" >
+					<active>
+						<tr x1="0" y1="0" x2="200" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<platform x="400" y="120" l="175" orientation="north"/>
+		<section id="6" name="M3" x="400" y="140">
+			<traces>
+				<v id="0" >
+					<active>
+						<tr x1="0" y1="0" x2="200" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<platform x="400" y="145" l="175" orientation="north"/>
+		<section id="7" name="M2" x="400" y="165">
+			<traces>
+				<v id="0" >
+					<active>
+						<tr x1="0" y1="0" x2="200" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<platform x="400" y="170" l="175" orientation="north"/>
+		<section id="8" name="M1" x="400" y="190">
+			<traces>
+				<v id="0" >
+					<active>
+						<tr x1="0" y1="0" x2="200" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<platform x="400" y="195" l="175" orientation="north"/>
+		<section id="9" name="C05" x="400" y="80">
+			<traces>
+				<v id="0" >
+					<active>
+						<tr x1="0" y1="0" x2="200" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<section id="10" name="C08" x="605" y="115">
+			<frogs>
+				<frog x="100" y="-3" w="7" h="7"/>
+			</frogs>
+			<traces>
+				<v id="0">
+					<inactive>
+						<tr x1="0" y1="25" x2="71" y2="25"/>
+						<tr x1="70" y1="25" x2="83" y2="10"/>
+					</inactive>
+					<active>
+						<tr x1="109" y1="0" x2="200" y2="0"/>
+						<tr x1="0" y1="0" x2="98" y2="0"/>
+					</active>
+				</v>
+				<v id="1">
+					<inactive>
+						<tr x1="0" y1="0" x2="75" y2="0"/>
+					</inactive>
+					<active>
+						<tr x1="109" y1="0" x2="200" y2="0"/>
+						<tr x1="0" y1="25" x2="71" y2="25"/>
+						<tr x1="70" y1="25" x2="90" y2="0"/>
+						<tr x1="89" y1="0" x2="98" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<section id="11" name="C07" x="605" y="80">
+			<traces>
+				<v id="0" >
+					<active>
+						<tr x1="0" y1="0" x2="200" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>
+		<section id="12" name="C06" x="605" y="190">
+			<frogs>
+				<frog x="100" y="-3" w="7" h="7"/>
+			</frogs>
+			<traces>
+				<v id="0">
+					<inactive>
+						<tr x1="0" y1="-25" x2="71" y2="-25"/>
+						<tr x1="70" y1="-25" x2="83" y2="-10"/>
+					</inactive>
+					<active>
+						<tr x1="0" y1="0" x2="98" y2="0"/>
+						<tr x1="109" y1="0" x2="200" y2="0"/>
+					</active>
+				</v>
+				<v id="1">
+					<inactive>
+						<tr x1="0" y1="0" x2="75" y2="0"/>
+					</inactive>
+					<active>
+						<tr x1="109" y1="0" x2="200" y2="0"/>
+						<tr x1="0" y1="-25" x2="71" y2="-25"/>
+						<tr x1="70" y1="-25" x2="90" y2="0"/>
+						<tr x1="89" y1="0" x2="98" y2="0"/>
+					</active>
+				</v>
+			</traces>
+		</section>	
+	</topology>	
+	<views>
+		<view id="0" name="CTC" x="0" y="0" w="1000" h="800" scale="1"/>
+	
+	</views>
+	<itineraries>
+		<!-- Descripción de los posibles itinerarios que se pueden crear con este enclavamiento -->		
+		<itin id="Entrada vía 1" group="Entradas" origin="C02" destination="M1" key="E1,M1">
+			<pre ckfree="C02,C04,M1,C06"/>
+			<chg>
+				<pos cir="C04" set="0"/>
+				<pos cir="C06" set="0"/>
+				<signal id="A1" set="free"/>
+				<signal id="E1" set="stopAdvice"/>
+				<signal id="S1" set="stop"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C02,C04,M1"/>
+		</itin>
+		<itin id="Salida vía 1" group="Salidas" origin="M1" destination="C06" key="S1,C06">
+			<pre ckfree="C06"/>
+			<chg>
+				<pos cir="C06" set="0"/>
+				<signal id="A1" set="stopAdvice"/>
+				<signal id="E1" set="stop"/>
+				<signal id="S1" set="free"/>
+			</chg>
+			<post setlock="M1,C06"/>
+		</itin>
+		<itin id="Paso directo vía 1" group="Pasos" origin="C02" destination="C06" key="E1,S1,C06">
+			<pre ckfree="C02,C04,M1,C06"/>
+			<chg>
+				<pos cir="C04" set="0"/>
+				<pos cir="C06" set="0"/>
+				<signal id="A1" set="free"/>
+				<signal id="E1" set="free"/>
+				<signal id="S1" set="free"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C02,C04,M1,C06"/>
+		</itin>
+		<itin id="Entrada vía 2" group="Entradas" origin="C02" destination="M2" key="E1,M2">
+			<pre ckfree="C02,C04,M2,C06"/>
+			<chg>
+				<pos cir="C04" set="1"/>
+				<pos cir="C06" set="1"/>
+				<signal id="A1" set="warning"/>
+				<signal id="E1" set="stopAdvice"/>
+				<signal id="S2" set="stop"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C02,C04,M2"/>
+		</itin>
+		<itin id="Salida vía 2" group="Salidas" origin="M2" destination="C06" key="S2,C06">
+			<pre ckfree="C06"/>
+			<chg>
+				<pos cir="C06" set="1"/>
+				<signal id="A1" set="stopAdvice"/>
+				<signal id="E1" set="stop"/>
+				<signal id="S2" set="free"/>
+			</chg>
+			<post setlock="M2,C06"/>
+		</itin>
+		<itin id="Paso directo vía 2" group="Pasos" origin="C02" destination="C06" key="E1,S2,C06">
+			<pre ckfree="C02,C04,M2,C06"/>
+			<chg>
+				<pos cir="C04" set="1"/>
+				<pos cir="C06" set="1"/>
+				<signal id="A1" set="warning"/>
+				<signal id="E1" set="warning"/>
+				<signal id="S2" set="free"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C02,C04,M2,C06"/>
+		</itin>
+		<itin id="Entrada vía 3" group="Entradas" origin="C01" destination="M3" key="E2,M3">
+			<pre ckfree="C01,C03,M3,C08"/>
+			<chg>
+				<pos cir="C03" set="1"/>
+				<pos cir="C08" set="1"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="stopAdvice"/>
+				<signal id="S3" set="stop"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C01,C03,M3"/>
+		</itin>
+		<itin id="Salida vía 3" group="Salidas" origin="M3" destination="C08" key="S3,C08">
+			<pre ckfree="C08"/>
+			<chg>
+				<pos cir="C08" set="1"/>
+				<signal id="A2" set="stopAdvice"/>
+				<signal id="E2" set="stop"/>
+				<signal id="S3" set="free"/>
+			</chg>
+			<post setlock="M3,C08"/>
+		</itin>
+		<itin id="Paso directo vía 3" group="Pasos" origin="C01" destination="C08" key="E2,S3,C08">
+			<pre ckfree="C01,C03,M3,C08"/>
+			<chg>
+				<pos cir="C03" set="1"/>
+				<pos cir="C08" set="1"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="warning"/>
+				<signal id="S3" set="free"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C01,C03,M3,C08"/>
+		</itin>
+		<itin id="Entrada vía 4" group="Entradas" origin="C01" destination="M4" key="E2,M4">
+			<pre ckfree="C01,C03,M4,C08"/>
+			<chg>
+				<pos cir="C03" set="2"/>
+				<pos cir="C08" set="0"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="stopAdvice"/>
+				<signal id="S4" set="stop"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C01,C03,M4"/>
+		</itin>
+		<itin id="Salida vía 4" group="Salidas" origin="M4" destination="C08" key="S4,C08">
+			<pre ckfree="C08"/>
+			<chg>
+				<pos cir="C08" set="0"/>
+				<signal id="A3" set="stopAdvice"/>
+				<signal id="E3" set="stop"/>
+				<signal id="S4" set="free"/>
+			</chg>
+			<post setlock="M4,C08"/>
+		</itin>		
+		<itin id="Paso directo vía 4" group="Pasos" origin="C01" destination="C08" key="E2,S4,C08">
+			<pre ckfree="C01,C03,M4,C08"/>
+			<chg>
+				<pos cir="C03" set="2"/>
+				<pos cir="C08" set="0"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="free"/>
+				<signal id="S4" set="free"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C01,C03,M4,C08"/>
+		</itin>
+		<itin id="Paso directo vía 5" group="Pasos" origin="C01" destination="C07" key="E2,I1">
+			<pre ckfree="C01,C03,C05,C07"/>
+			<chg>
+				<pos cir="C03" set="0"/>
+				<signal id="A2" set="free"/>
+				<signal id="E2" set="free"/>
+				<signal id="I1" set="free"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C01,C03,C05,C07"/>
+		</itin>
+		<itin id="Entrada vía 5" group="Entradas" origin="C01" destination="C05" key="E2,C05">
+			<pre ckfree="C01,C03,C05"/>
+			<chg>
+				<pos cir="C03" set="0"/>
+				<signal id="A2" set="free"/>
+				<signal id="E2" set="stopAdvice"/>
+				<signal id="I1" set="stop"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C01,C03,C05"/>
+		</itin>
+		<itin id="Salida vía 5" group="Salidas" origin="C05" destination="C07" key="I1,C07">
+			<pre ckfree="C07"/>
+			<chg>				
+				<signal id="A2" set="stopAdvice"/>
+				<signal id="E2" set="stop"/>
+				<signal id="I1" set="free"/>
+			</chg>
+			<post setlock="C05,C07"/>
+		</itin>
+	</itineraries>
+	<server>
+		<ethernet ip="192.168.0.10" mask="24" mac="DE:AD:BE:EF:FE:00"/>
+	</server>
+	<clients>
+		<client name="Empty" id="0" interface="1">
+			<ethernet ip="192.168.0.254" mask="24" mac="DE:AD:BE:EF:FE:00"/>
+		</client>
+		<client name="mtx0" id="1" interface="1">
+			<!--Armario del túnel-->
+			<ethernet ip="192.168.0.10" mask="24" mac="DE:AD:BE:EF:FE:10">
+				<signal id="1" name="A2" type="light" defaultOrder="stopAdvice">
+					<light color="green" port="23" inverted ="false"/>
+					<light color="yellow" port="25" inverted="false"/>				
+				</signal>
+				<signal id="2" name="A1" type="light" defaultOrder="stopAdvice">
+					<light color="green" port="27" inverted ="false"/>
+					<light color="yellow" port="29" inverted="false"/>
+				</signal>				
+			</ethernet>
+		</client>
+		<client name="mtx1" id="1" interface="1">
+			<!--Armario de la entrada de Marratxinet-->
+			<ethernet ip="192.168.0.11" mask="24" mac="DE:AD:BE:EF:FE:01"/>
+			<signal id="3" name="E2" type="light" defaultOrder="stop">
+				<light color="green" port="25" inverted="false"/>
+				<light color="red" port="24" inverted="true"/>
+				<light color="yellow" port="27" inverted="false"/>
+				<light color="white" port="26" inverted="false"/>							
+			</signal>																			
+			<signal id="4" name="E1" type="light" defaultOrder="stop">
+				<light color="green" port="29" inverted="false"/>
+				<light color="red" port="28" inverted="true"/>
+				<light color="yellow" port="31" inverted="false"/>
+				<light color="white" port="30" inverted="false"/>							
+			</signal>
+			<layout id="1" name="c03" sequential="true">
+				<frogs>
+					<frog id="0" timeout="250">
+						<l298n enable="32" a="33" b="34"/>						
+					</frog>
+					<frog id="1" timeout="250">
+						<l298n enable="35" a="36" b="37"/>
+					</frog>
+				</frogs>
+				<itins>
+					<itin id="0" name="Paso directo c05">
+						<frog id="0" rect="true"/>
+					</itin>
+					<itin id="1" name="Entrada a via 3">
+						<frog id="0" rect="false"/>
+						<frog id="1" rect="true"/>
+					</itin>
+					<itin id="1" name="Entrada a via 4">
+						<frog id="0" rect="false"/>
+						<frog id="1" rect="false"/>
+					</itin>
+				</itins>
+			</layout>
+			<layout id="2" name="c04" sequential="true">
+				<frogs>
+					<frog id="0" timeout="10">
+						<l298n enable ="38" a="39" b="40"/>
+					</frog>
+				</frogs>
+				<itins>
+					<itin id="0" name="Entrada a via 1">
+						<frog id="0" rect="true"/>
+					</itin>
+					<itin id="1" name="Entrada a via 2">
+						<frog id="0" rect="false"/>
+					</itin>
+				</itins>
+			</layout>
+		</client>
+		<client name="mtx2" id="2" interface="1">
+			<!--Pórtico de señales-->
+			<ethernet ip="192.168.0.12" mask="24" mac="DE:AD:BE:EF:FE:02"/>
+			<signal id="9" name="I1" type="semaphore" defaultOrder="stop">
+				<light color="red" port="27" inverted ="true"/>
+				<light color="green" port="26" inverted ="false"/>				
+				<servo port="A5" stopAngle="290" allowAngle="80" tomeu="true" dynamic="true" speed="1"/>
+			</signal>
+			<signal id="5" name="S1" type="semaphore" defaultOrder="stop">
+				<light color="red" port="23" inverted ="true"/>
+				<light color="green" port="29" inverted ="false"/>				
+				<servo port="A1" stopAngle="290" allowAngle="80" tomeu="true" dynamic="true" speed="1"/>
+			</signal>
+			<signal id="6" name="S2" type="semaphore" defaultOrder="stop">
+				<light color="red" port="25" inverted ="true"/>
+				<light color="green" port="28" inverted ="false"/>				
+				<servo port="A2" stopAngle="280" allowAngle="70" tomeu="true" dynamic="true" speed="1"/>
+			</signal>
+			<signal id="7" name="S3" type="semaphore" defaultOrder="stop">
+				<light color="red" port="24" inverted ="true"/>
+				<servo port="A3" stopAngle="286" allowAngle="90" tomeu="true" dynamic="true" speed="1"/>
+			</signal>
+			<signal id="8" name="S4" type="semaphore" defaultOrder="stop">
+				<light color="red" port="22" inverted ="true"/>
+				<servo port="A4" stopAngle="280" allowAngle="70" tomeu="true" dynamic="true" speed="1"/>
+			</signal>
+			<circuit id="3" name="m1" port="32"/>
+			<circuit id="4" name="m2" port="33"/>
+			<circuit id="5" name="m3" port="34"/>
+			<circuit id="6" name="m4" port="35"/>
+			<circuit id="7" name="c05" port="36"/>
+		</client>
+		<client name="mini" id="3" interface ="0">
+			<ethernet ip="192.168.0.13" mask="24" mac="DE:AD:BE:EF:FE:03"/>
+			<signal id="3" name="E2" type="light" defaultOrder="stop">
+				<light color="green" port="30" inverted="false"/>
+				<light color="red" port="31" inverted="false"/>
+				<light color="yellow" port="32" inverted="false"/>
+				<light color="white" port="33" inverted="false"/>
+			</signal>
+			<signal id="4" name="E1" type="light" defaultOrder="stop">
+				<light color="green" port="22" inverted="true"/>
+				<light color="red" port="23" inverted="true"/>
+				<light color="yellow" port="24" inverted="true"/>
+				<light color="white" port="25" inverted="true"/>
+			</signal>
+			<signal id="7" name="I1" type="semaphore" defaultOrder="stop">
+				<servo port="A5" stopAngle="270" allowAngle="90" tomeu="false" dynamic="true" speed="1"/>
+			</signal>			
+			<layout id="3" name="c03" sequential="true">
+				<frogs>
+					<frog id="0" timeout="200">
+						<l298n enable="40" a="41" b="38"/>
+					</frog>
+					<frog id="1" timeout="200">
+						<l298n enable="37" a="39" b="36"/>
+					</frog>
+				</frogs>
+				<itins>
+					<itin id="0" name="Paso directo c05">
+						<frog id="0" rect="true"/>
+					</itin>
+					<itin id="1" name="Entrada a via 3">
+						<frog id="0" rect="false"/>
+						<frog id="1" rect="true"/>
+					</itin>
+					<itin id="1" name="Entrada a via 4">
+						<frog id="0" rect="false"/>
+						<frog id="1" rect="false"/>
+					</itin>
+				</itins>
+			</layout>
+		</client>
+	</clients>
+</mtfComm>

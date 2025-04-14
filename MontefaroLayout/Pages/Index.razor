@@ -1,0 +1,192 @@
+﻿@page "/"
+@using MontefaroLayout.Components.Razor
+@using MontefaroMatias.LayoutView.Elements
+@using MontefaroMatias.Locking
+<div class="container-fluid p-5 bg-dark text-white text-center">
+    <img src="img/LOGOCFVM.gif" width="256">
+    <h3>Control de Tráfico Centralizado</h3>
+    <MtCanvas width=830 height=250 @bind-Drawables="mcolDrawables"></MtCanvas>
+</div>
+<div class="container-md">
+    <div class="row">
+        <div class="m6">
+            <h3>@showSelElements()</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            @if (hasToDrawTable)
+            {
+                <h4>Itinerarios posibles</h4>
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Exec</th>
+                            <th>Id</th>
+                            <th>Grupo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (LockOperation operation in lockOperations())
+                        {
+                            <tr>
+                                <td><button type="button" class="btn btn-dark" @onclick="@(() => ExecuteElement(operation))">...</button></td>
+                                <td>@operation.name</td>
+                                <td>@operation.groupId</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>             
+            }
+        </div>
+        <div class="col-md-4">
+            <div class="btn-group btn-group-lg">
+                <button type="button" class="btn btn-primary" onclick="@clearElements">Clear</button>
+                <button type="button" class="btn btn-primary" onclick="@OnDai">DAI</button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if(hasToDrawDai)
+            {
+                <h4>Itinerarios enclavados</h4>
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Exec</th>
+                            <th>Id</th>
+                            <th>Grupo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (LockOperation operation in activeOperations())
+                        {
+                            <tr>
+                                <td><button type="button" class="btn btn-dark" @onclick="@(() => ClearElement(operation))">...</button></td>
+                                <td>@operation.name</td>
+                                <td>@operation.groupId</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+@code
+{
+    private MontefaroMatias.LayoutView.Topology mvartt;
+    private List<Element> mcolDrawables { get; set; } = new List<Element>();
+    private MontefaroMatias.IpSender auxSender = new IpSender();
+
+    protected override void OnInitialized()
+    {
+        Storage auxStorage = new Storage();
+        mvartt = auxStorage.topology;
+        mcolDrawables = mvartt.Elements;
+        DynamicElement.AddElementCallback = addElement;
+        mvartt.Dai();
+    }
+    private bool hasToDrawTable{ get => mvartt.selOperations().Count < 5; }
+    private bool hasToDrawDai{ get => mvartt.activeOperations.Count > 0; }
+
+    private List<LockOperation> lockOperations()
+    {
+        return mvartt.selOperations();
+    }
+    private List<LockOperation> activeOperations()
+    {
+        return mvartt.activeOperations;
+    }
+
+    private string showSelElements()
+    {
+        System.Text.StringBuilder salida = new System.Text.StringBuilder();
+        foreach (string element in mvartt.selElements)
+        {
+            salida.Append(element);
+            salida.Append(" ");
+        }
+        return salida.ToString();
+    }
+
+    private void addElement(string? id)
+    {
+        //Añade un nuevo elemento a la lista de referencias.
+        if(null!=id)
+        {
+            if (!mvartt.selElements.Contains(id))
+            {
+                mvartt.selElements.Add(id);
+                List<LockOperation> auxLista = mvartt.selOperations();
+                if (1 == auxLista.Count) ExecuteElement(auxLista[0]);
+                StateHasChanged();
+            }                       
+        }
+    }
+    private void ExecuteElement(LockOperation rhs)
+    {
+        mvartt.ExecuteOperation(rhs);
+        auxSender.send(mvartt);
+        clearElements();
+    }
+    private void ClearElement(LockOperation rhs)
+    {
+        mvartt.UndoOperation(rhs);
+        auxSender.send(mvartt);
+        clearElements();
+    }
+
+    private void clearElements()
+    {
+        mvartt.selElements.Clear();
+    }
+
+    protected void OnShunt(int via)
+    {
+        mvartt.ChangeCrossing("PN1", Common.crossingStatus.csOpen);
+        switch (via)
+        {
+            case 1:
+                mvartt.ChangeStatus("C02,C04", Common.layoutTraceStatus.ltShunt);
+                mvartt.ChangeStatus("M1", Common.layoutTraceStatus.ltOccupied);
+                mvartt.ChangePosition("C04", 0);
+                mvartt.ChangePosition("C06", 0);
+                mvartt.ChangeOrder("A1", Common.orderType.toAvisoDeParada);
+                mvartt.ChangeOrder("E1", Common.orderType.toRebaseAutorizado);
+                break;
+            case 2:
+                mvartt.ChangeStatus("C02,C04", Common.layoutTraceStatus.ltShunt);
+                mvartt.ChangeStatus("M2", Common.layoutTraceStatus.ltOccupied);
+                mvartt.ChangePosition("C04", 1);
+                mvartt.ChangePosition("C06", 1);
+                mvartt.ChangeOrder("A1", Common.orderType.toAvisoDeParada);
+                mvartt.ChangeOrder("E1", Common.orderType.toRebaseAutorizado);                
+                break;
+            case 3:
+                mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
+                mvartt.ChangeStatus("M3", Common.layoutTraceStatus.ltOccupied);
+                mvartt.ChangePosition("C03", 1);
+                mvartt.ChangePosition("C08", 1);
+                mvartt.ChangeOrder("A2", Common.orderType.toAvisoDeParada);
+                mvartt.ChangeOrder("E2", Common.orderType.toRebaseAutorizado);                
+                break;
+            case 4:
+                mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
+                mvartt.ChangeStatus("M4", Common.layoutTraceStatus.ltOccupied);
+                mvartt.ChangePosition("C03", 2);
+                mvartt.ChangePosition("C08", 0);
+                mvartt.ChangeOrder("A2", Common.orderType.toAvisoDeParada);
+                mvartt.ChangeOrder("E2", Common.orderType.toRebaseAutorizado);
+                break;
+        }
+        auxSender.send(mvartt);
+    }
+
+
+
+    protected void OnDai()
+    {
+        mvartt.Dai();
+        auxSender.send(mvartt);
+    }
+}

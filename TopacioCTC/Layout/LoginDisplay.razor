@@ -1,0 +1,37 @@
+﻿@inject NavigationManager Navigation
+@inject IJSRuntime mvarJSRuntime
+
+@if (mvarSessionOpen)
+{
+    <p>Usuario @mvarUserName</p>
+    <button class="nav-link btn btn-link" @onclick="BeginLogOut">Cerrar</button>
+}
+else
+{
+    <a href="/login">Abrir sesión</a>
+}
+
+@code{
+
+    private bool mvarSessionOpen { get; set; }
+    private string? mvarUserName{ get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        mvarSessionOpen = await AuthService.isSessionOpen();
+        mvarUserName = await AuthService.GetUserName();
+    }
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        mvarSessionOpen = await AuthService.isSessionOpen();
+        mvarUserName = await AuthService.GetUserName();
+    }
+
+    public void BeginLogOut()
+    {
+        Navigation.NavigateTo("/logout");
+    }
+
+    
+}

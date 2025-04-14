@@ -1,0 +1,24 @@
+﻿@using MontefaroMatias.LayoutView.Elements
+@using Microsoft.AspNetCore.Components.Rendering
+<svg width="@width" height="@height" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="black" />
+    @foreach (MontefaroMatias.LayoutView.Elements.Element el in Drawables)
+    {
+        @getFragment(el)
+    }
+</svg>
+@code 
+{
+    private RenderFragment getFragment(MontefaroMatias.LayoutView.Elements.Element rhs) 
+    {
+        return builder => rhs.compose(builder);       
+    }
+    [Parameter]
+    public int width { get; set; } = 100;
+    [Parameter]
+    public int height { get; set; } = 100;
+    [Parameter]
+    public List<MontefaroMatias.LayoutView.Elements.Element> Drawables{ get; set; }
+    [Parameter]
+    public EventCallback<List<MontefaroMatias.LayoutView.Elements.Element>> DrawablesChanged { get; set; }
+}
