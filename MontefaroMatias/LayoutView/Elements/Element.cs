@@ -12,9 +12,10 @@ namespace MontefaroMatias.LayoutView.Elements
     public abstract class Element
     {
         public long X { get; set; } //Es la posición a representar de este elemento
-        public long Y { get; set; } //Su contenido se representa relativa a la posición total.
-        public static View? currentView { get; set; } //Asigna la vista actual para calcular las coordenadas a representar.
+        public long Y { get; set; } //Su contenido se representa relativa a la posición total.        
         public string? name { get; set; }
+
+        public static View? currentView { get; set; } //Asigna la vista actual para calcular las coordenadas a representar.
         public Element()
         {}
         public virtual bool parse(XmlNode node)
@@ -25,6 +26,28 @@ namespace MontefaroMatias.LayoutView.Elements
             if (X >= 0 && Y >= 0) return true;
             return false;
         }
+
+        public virtual PortableElement portableElement
+        {
+            get
+            {
+                PortableElement salida = new PortableElement(0);
+                salida.X = X;
+                salida.Y = Y;
+                salida.nme = name;
+                return salida;
+            }
+            set
+            {
+                deserializeFromPortable(value);
+            }
+        }
+        protected virtual void deserializeFromPortable(PortableElement rhs)
+        {
+            this.X = rhs.X;
+            this.Y = rhs.Y;
+            this.name = rhs.nme;
+        }
         //Invoca las funciones de dibujo de este elemento.
         public virtual void compose(RenderTreeBuilder builder)
         {
@@ -32,6 +55,12 @@ namespace MontefaroMatias.LayoutView.Elements
         }
 
         protected RenderTreeBuilder mvarBuilder { get; set; }
+
+        //Coordenadas del rectángulo contenedor de este elemento
+        protected long minX { get; set; }
+        protected long maxX { get; set; }
+        protected long minY { get; set; }
+        protected long maxY { get; set; }
 
         //Estas funciones llaman a las correspondientes de la estructura que componen los trazos.
         protected void addCircle(int xx, int yy, int r, string fill)
@@ -98,12 +127,6 @@ namespace MontefaroMatias.LayoutView.Elements
             return salida;
         }
 
-        //Coordenadas del rectángulo contenedor de este elemento
-        protected long minX { get; set; } 
-        protected long maxX { get; set; } 
-        protected long minY { get; set; }
-        protected long maxY { get; set; }
-
         //Parámetros XML
         protected string? parseString(XmlNode node,string attributeName)
         {
@@ -161,5 +184,26 @@ namespace MontefaroMatias.LayoutView.Elements
             }
             return Common.Orientation.North;
         }
+    }
+
+    /// <summary>
+    /// Este elemento es como el normal, pero está preparado para ser serializado
+    /// </summary>
+    public class PortableElement
+    {
+        public PortableElement(byte type) 
+        { 
+            typ = type; 
+        }
+        public void setBase(long x, long y, string? name)
+        {
+            this.X = x;
+            this.Y = y;
+            this.nme = name;
+        }
+        public long X { get; set; } //Es la posición a representar de este elemento
+        public long Y { get; set; } //Su contenido se representa relativa a la posición total.
+        public string? nme { get; set; }
+        public virtual byte typ { get; private set; } //Este tipo sirve para la deserialización
     }
 }

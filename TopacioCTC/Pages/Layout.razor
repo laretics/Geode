@@ -1,11 +1,11 @@
 ﻿@page "/layout"
-@using TopacioCTC.Components.Razor
 @using MontefaroMatias.LayoutView.Elements
 @using MontefaroMatias.Locking
+@inject TopacioClient mvarTopacioClient
 <div class="container-fluid p-5 bg-dark text-white text-center">
     <img src="img/LOGOCFVM.gif" width="256">
     <h3>Control de Tráfico Centralizado</h3>
-    <MtCanvas width=830 height=250 @bind-Drawables="mcolDrawables"></MtCanvas>
+    <MtCanvas width=830 height=250 @bind-Drawables="mcolDrawables"/>
 </div>
 <div class="container-md">
     <div class="row">
@@ -78,10 +78,10 @@
     private List<Element> mcolDrawables { get; set; } = new List<Element>();
     private MontefaroMatias.IpSender auxSender = new IpSender();
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        Storage auxStorage = new Storage();
-        mvartt = auxStorage.topology;
+        Topology? auxTopo = await mvarTopacioClient.getTopology();
+        mvartt = (null == auxTopo) ? new Topology() : auxTopo;
         mcolDrawables = mvartt.Elements;
         DynamicElement.AddElementCallback = addElement;
         mvartt.Dai();

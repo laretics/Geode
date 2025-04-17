@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Text.Json.Serialization;
 
 namespace MontefaroMatias.LayoutView
 {
@@ -26,14 +27,71 @@ namespace MontefaroMatias.LayoutView
             mcolSelectedElements = new List<string>();
             mcolActiveOperations = new List<LockOperation>();
         }
-        internal List<Element> mcolElements; //Lista con todas las geometrías.
+        public List<Element> mcolElements; //Lista con todas las geometrías.        
         internal Dictionary<string,Signal> mcolSignals;
         internal Dictionary<string, LayoutUnit> mcolCircuits;
         internal Dictionary<string, Crossing> mcolCrossings;
         internal List<LockOperation> mcolOperations; //Lista de todas las operaciones posibles en el enclavamiento
         internal List<LockOperation> mcolActiveOperations; //Lista con todas las operaciones que ahora mismo están activas.
         public List<Element> Elements { get => mcolElements; }
+        public Dictionary<string,Signal> Signals { get => mcolSignals; set => mcolSignals = value; }
+        public Dictionary<string,LayoutUnit> Circuits { get => mcolCircuits; set => mcolCircuits = value; }
         private List<string> mcolSelectedElements; //Lista de los elementos que están ahora mismo seleccionados
+        public PortableTopology portableElement
+        {
+            get
+            {
+                PortableTopology salida = new PortableTopology();
+                salida.setBase(0, 0, "Topology");
+                foreach (Element element in mcolElements)
+                {
+                    PortableElement nuevo = element.portableElement;
+                    switch(nuevo.typ)
+                    {
+                        case 1: //Platform
+                            salida.ptf.Add((PortablePlatform)nuevo); break;
+                        case 2: //Crossing
+                            salida.crs.Add((PortableCrossing)nuevo); break;
+                        case 3: //Signal
+                            salida.sgn.Add((PortableSignal)nuevo);  break;
+                        case 6: //LayoutUnit
+                            salida.lyt.Add((PortableLayoutUnit)nuevo); break;                
+                    }
+                }
+                return salida;
+            }
+            set
+            {
+                PortableTopology topo = value; 
+                foreach (PortablePlatform platform in topo.ptf)
+                {
+                    Platform anden = new Platform();
+                    anden.portableElement = platform;
+                    mcolElements.Add(anden);
+                }
+                foreach (PortableCrossing crossing in topo.crs)
+                {
+                    Crossing cruce = new Crossing();
+                    cruce.portableElement = crossing;
+                    mcolElements.Add(cruce);
+                    mcolCrossings.Add(cruce.name, cruce);
+                }
+                foreach (PortableSignal signal in topo.sgn)
+                {
+                    Signal senal = new Signal();
+                    senal.portableElement = signal;
+                    mcolElements.Add(senal);
+                    mcolSignals.Add(senal.name, senal);
+                }
+                foreach (PortableLayoutUnit layoutUnit in topo.lyt)
+                {
+                    LayoutUnit via = new LayoutUnit();
+                    via.portableElement = layoutUnit;
+                    mcolElements.Add(via);
+                    mcolCircuits.Add(via.name, via);
+                }
+            }
+        }
         public bool parse(XmlNode node)
         {
             foreach (XmlNode child in node.ChildNodes)
@@ -278,5 +336,19 @@ namespace MontefaroMatias.LayoutView
             }
             return salida;
         }
+    }
+    public class PortableTopology:PortableElement
+    {
+        public PortableTopology() : base(7)
+        {
+            ptf = new List<PortablePlatform>();
+            crs = new List<PortableCrossing>();
+            sgn = new List<PortableSignal>();
+            lyt = new List<PortableLayoutUnit>();
+        }
+        public List<PortablePlatform> ptf { get; set; }
+        public List<PortableCrossing> crs { get; set; }
+        public List<PortableSignal> sgn { get; set; }
+        public List<PortableLayoutUnit> lyt { get; set; }
     }
 }

@@ -14,10 +14,10 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        inSession = await AuthService.isSessionOpen();
+        inSession = await TopacioAuthService.isSessionOpen();
     }
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        inSession = await AuthService.isSessionOpen();
+        inSession = await TopacioAuthService.isSessionOpen();
     }
 }

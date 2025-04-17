@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -12,11 +13,49 @@ namespace MontefaroMatias.LayoutView.Elements
     public class LayoutUnit:DynamicElement
     {
         public int id {  get; set; }
-        internal List<Frog> mcolFrogs;
-        internal List<Trace> mcolTraces;
+        internal List<Frog> mcolFrogs { get; set; }
+        internal List<Trace> mcolTraces { get; set; }
+        public override PortableElement portableElement 
+        { 
+            get
+            {
+                PortableLayoutUnit salida = new PortableLayoutUnit();
+                salida.setBase(X, Y, name);
+                salida.id = id;
+                foreach(Frog frog in mcolFrogs)
+                {
+                    PortableFrog xFrog = (PortableFrog)frog.portableElement;
+                    salida.frg.Add(xFrog);                       
+                }
+                foreach(Trace trace in mcolTraces)
+                {
+                    PortableTrace xTrace = (PortableTrace)trace.portableElement;
+                    salida.trc.Add(xTrace);
+                }
+                return salida;
+            }
+        }
+        protected override void deserializeFromPortable(PortableElement rhs)
+        {
+            base.deserializeFromPortable(rhs);
+            PortableLayoutUnit xUnit = (PortableLayoutUnit)rhs;
+            id = xUnit.id;
+            foreach (PortableFrog frog in xUnit.frg)
+            {
+                Frog auxFrog = new Frog();
+                auxFrog.portableElement = frog;
+                auxFrog.parent = this;
+                mcolFrogs.Add(auxFrog);
+            }
+            foreach (PortableTrace trace in xUnit.trc)
+            {
+                Trace auxTrace = new Trace(this);
+                auxTrace.portableElement = trace;
+                mcolTraces.Add(auxTrace);
+            }                
+        } //Estado actual del enclavamiento
         public Common.layoutTraceStatus currentStatus { get; set; } //Estado actual del enclavamiento
         private byte mvarCurrentPosition;
-
         public byte currentPosition
         //Combinación de agujas actual
         {
@@ -166,9 +205,34 @@ namespace MontefaroMatias.LayoutView.Elements
             public int y0 { get; set; }
             public int x1 { get; set; }
             public int y1 { get; set; }
-            public int layoutSelector {  get; set; } //Es el índice para el que este elemento se dibuja
-            public bool active { get; set; } //Indica si este trazo es activo o no
+            public int layoutSelector { get; set; } //Es el índice para el que este elemento se dibuja            
+            public override PortableElement portableElement 
+            { 
+                get
+                {
+                    PortableTrace salida = new PortableTrace();
+                    salida.setBase(X, Y, name);
+                    salida.x0 = x0;
+                    salida.y0 = y0;
+                    salida.x1 = x1;
+                    salida.y1 = y1;
+                    salida.sel = layoutSelector;
+                    return salida;
+                }                
+            }
+            protected override void deserializeFromPortable(PortableElement rhs)
+            {
+                base.deserializeFromPortable(rhs);
+                PortableTrace xTrace = (PortableTrace) rhs;
+                this.x0 = xTrace.x0;
+                this.y0 = xTrace.y0;
+                this.x1 = xTrace.x1;
+                this.y1 = xTrace.y1;
+                this.layoutSelector = xTrace.sel;
+            } 
             public LayoutUnit parent { get; set; } //Referencia al padre de este trazo.
+            public bool active { get; set; } //Indica si este trazo es activo o no
+
 
             internal string mainColor
             {
@@ -213,7 +277,16 @@ namespace MontefaroMatias.LayoutView.Elements
                 return true;
             }
         }
-
+        public class PortableTrace:PortableElement
+        {
+            public PortableTrace():base(5)
+            { }
+            public int x0 { get; set; }
+            public int y0 { get; set; }
+            public int x1 { get; set; }
+            public int y1 { get; set; }
+            public int sel { get; set; }
+        }
         public class Frog:DynamicElement
         {
             public LayoutUnit parent {  get; set; }
@@ -221,6 +294,30 @@ namespace MontefaroMatias.LayoutView.Elements
             public int yy { get; set; }
             public int width {  get; set; }
             public int height { get; set; }
+            
+            public override PortableElement portableElement 
+            { 
+                get
+                {
+                    PortableFrog salida = new PortableFrog();
+                    salida.setBase(X, Y, name);
+                    salida.xf = xx;
+                    salida.yf = yy;
+                    salida.wf = width;
+                    salida.hf = height;
+                    return salida;
+                }
+                set => deserializeFromPortable(value);
+            }
+            protected override void deserializeFromPortable(PortableElement rhs)
+            {
+                base.deserializeFromPortable(rhs);
+                PortableFrog xFrog = (PortableFrog) rhs;
+                this.xx = xFrog.xf;
+                this.yy = xFrog.yf;
+                this.width = xFrog.wf;
+                this.height = xFrog.hf;
+            }
             public override void compose(RenderTreeBuilder builder)
             {
                 base.compose(builder);
@@ -254,6 +351,27 @@ namespace MontefaroMatias.LayoutView.Elements
                     return "magenta";
                 }
             }
+        }
+        public class PortableFrog:PortableElement
+        {
+            public PortableFrog():base(4)
+            {}
+            public int xf { get; set; }
+            public int yf { get; set; }
+            public int wf { get; set; }
+            public int hf { get; set; }
+
+        }
+    }
+    public class PortableLayoutUnit:PortableElement
+    {
+        public int id { get; set; }
+        public List<LayoutUnit.PortableFrog> frg { get; set; }
+        public List<LayoutUnit.PortableTrace> trc { get; set; }
+        public PortableLayoutUnit() : base(6) 
+        {
+            frg = new List<LayoutUnit.PortableFrog>();
+            trc = new List<LayoutUnit.PortableTrace>();
         }
     }
 }

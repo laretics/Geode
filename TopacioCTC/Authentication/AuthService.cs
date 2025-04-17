@@ -2,10 +2,10 @@
 
 namespace TopacioCTC.Authentication
 {
-    public class AuthService
+    public class TopacioAuthService
     {
         protected static IJSRuntime mvarJSRuntime;
-        public AuthService(IJSRuntime runtime)
+        public TopacioAuthService(IJSRuntime runtime)
         {
             mvarJSRuntime = runtime;
         }

@@ -12,9 +12,25 @@ namespace MontefaroMatias.LayoutView.Elements
     {
         public Common.Orientation orientation { get; set; }
         public int length { get; set; } //Longitud del andén.
-        public Platform():base()
-        {
+        public Platform():base(){}
 
+        public override PortableElement portableElement 
+        { 
+            get
+            {
+                PortablePlatform salida = new PortablePlatform();
+                salida.setBase(X, Y, name);
+                salida.or=(byte)orientation;
+                salida.l = length;                
+                return salida;
+            }           
+        }
+        protected override void deserializeFromPortable(PortableElement rhs)
+        {
+            base.deserializeFromPortable(rhs);
+            PortablePlatform xPlatform = (PortablePlatform) rhs;
+            this.orientation = (Common.Orientation)xPlatform.or;
+            this.length = xPlatform.l;
         }
 
         public override bool parse(XmlNode node)
@@ -47,6 +63,12 @@ namespace MontefaroMatias.LayoutView.Elements
                     break;
             }
         }
-
+    }
+    public class PortablePlatform:PortableElement
+    {
+        public PortablePlatform() : base(1)
+        { }
+        public byte or { get; set; }
+        public int l { get; set; } //Longitud del andén.
     }
 }

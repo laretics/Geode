@@ -18,14 +18,14 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        mvarSessionOpen = await AuthService.isSessionOpen();
-        mvarUserName = await AuthService.GetUserName();
+        mvarSessionOpen = await TopacioAuthService.isSessionOpen();
+        mvarUserName = await TopacioAuthService.GetUserName();
     }
     protected override async void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
-        mvarSessionOpen = await AuthService.isSessionOpen();
-        mvarUserName = await AuthService.GetUserName();
+        mvarSessionOpen = await TopacioAuthService.isSessionOpen();
+        mvarUserName = await TopacioAuthService.GetUserName();
     }
 
     public void BeginLogOut()

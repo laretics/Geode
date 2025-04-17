@@ -1,5 +1,5 @@
 ﻿@page "/login"
-@inject AuthService mvarAuthenticator
+@inject TopacioAuthService mvarAuthenticator
 @inject NavigationManager Navigation
 
 <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
@@ -24,8 +24,8 @@
     {
         if (mvarAuthenticator.Authenticate(loginModel.Username, loginModel.Password))
         {
-            await AuthService.SetToken();
-            await AuthService.SetUserName(loginModel.Username);
+            await TopacioAuthService.SetToken();
+            await TopacioAuthService.SetUserName(loginModel.Username);
             Navigation.NavigateTo("/");
         }
         else

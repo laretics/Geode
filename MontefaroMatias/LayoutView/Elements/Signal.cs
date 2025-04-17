@@ -15,6 +15,28 @@ namespace MontefaroMatias.LayoutView.Elements
         public int id {  get; set; }
         public bool shunt { get; set; } 
         public Common.Orientation orientation { get; set; }
+
+        public override PortableElement portableElement 
+        { 
+            get
+            {
+                PortableSignal salida = new PortableSignal();
+                salida.setBase(X, Y, name);
+                salida.or = (byte)orientation;
+                salida.sh = shunt;
+                salida.id = id;
+                return salida;
+            }
+        }
+        protected override void deserializeFromPortable(PortableElement rhs)
+        {
+            base.deserializeFromPortable(rhs);
+            PortableSignal xSignal = (PortableSignal)rhs;
+            this.orientation=(Common.Orientation)xSignal.or;
+            this.shunt = xSignal.sh;
+            this.id = xSignal.id;
+        }
+
         private Common.orderType mvarOrder;
         public Common.orderType Order 
         {
@@ -158,4 +180,13 @@ namespace MontefaroMatias.LayoutView.Elements
             }
         }
     }
+    public class PortableSignal : PortableElement
+    {
+        public PortableSignal() : base(3)
+        { }
+        public int id { get; set; }
+        public bool sh { get; set; }
+        public byte or { get; set; } 
+    }
+    
 }

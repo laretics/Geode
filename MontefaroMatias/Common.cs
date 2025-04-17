@@ -2,12 +2,12 @@
 {
     public static class Common
     {
-        public enum Orientation
+        public enum Orientation:byte
         {
-            North,
-            South,
-            East,
-            West
+            North=0,
+            South=1,
+            East=2,
+            West=3
         }
         public enum orderType:byte
         {

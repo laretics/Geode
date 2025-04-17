@@ -12,12 +12,33 @@ namespace MontefaroMatias.LayoutView.Elements
     /// <summary>
     /// Paso a nivel en el enclavamiento.
     /// </summary>
-    class Crossing:DynamicElement
+    public class Crossing:DynamicElement
     {                  
         public int id { get; set; } //Por si algún día tengo un objeto paso con índice
-        public Common.Orientation orientation { get; set; }
-        public Common.crossingStatus status { get; set; }
+        public Common.Orientation orientation { get; set; }        
         public int length { get; set; } //Longitud del paso a nivel
+        public Common.crossingStatus status { get; set; }
+
+        public override PortableElement portableElement 
+        { 
+            get
+            {
+                PortableCrossing salida = new PortableCrossing();
+                salida.setBase(X, Y, name);
+                salida.or = (byte)orientation;
+                salida.l = length;
+                salida.id = id;
+                return salida;
+            }
+        }
+        protected override void deserializeFromPortable(PortableElement rhs)
+        {
+            base.deserializeFromPortable(rhs);
+            PortableCrossing xCrossing = (PortableCrossing)rhs;
+            this.orientation = (Common.Orientation)xCrossing.or;
+            this.length = xCrossing.l;
+            this.id = xCrossing.id;
+        }
 
         public Crossing():base()
         {
@@ -78,5 +99,13 @@ namespace MontefaroMatias.LayoutView.Elements
             }
         }
 
+    }
+    public class PortableCrossing:PortableElement
+    {
+        public PortableCrossing() : base(2)
+        { }
+        public int id { get; set; } //Por si algún día tengo un objeto paso con índice
+        public byte or { get; set; }
+        public int l { get; set; } //Longitud del paso a nivel
     }
 }
