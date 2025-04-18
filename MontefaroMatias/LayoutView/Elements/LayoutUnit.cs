@@ -22,6 +22,10 @@ namespace MontefaroMatias.LayoutView.Elements
                 PortableLayoutUnit salida = new PortableLayoutUnit();
                 salida.setBase(X, Y, name);
                 salida.id = id;
+                salida.lbx = labelX;
+                salida.lby = labelY;
+                salida.pos = mvarCurrentPosition;
+                salida.sta = (byte)currentStatus;
                 foreach(Frog frog in mcolFrogs)
                 {
                     PortableFrog xFrog = (PortableFrog)frog.portableElement;
@@ -40,6 +44,10 @@ namespace MontefaroMatias.LayoutView.Elements
             base.deserializeFromPortable(rhs);
             PortableLayoutUnit xUnit = (PortableLayoutUnit)rhs;
             id = xUnit.id;
+            labelX = xUnit.lbx;
+            labelY = xUnit.lby;
+            mvarCurrentPosition = xUnit.pos;
+            currentStatus = (Common.layoutTraceStatus)xUnit.sta;
             foreach (PortableFrog frog in xUnit.frg)
             {
                 Frog auxFrog = new Frog();
@@ -49,11 +57,12 @@ namespace MontefaroMatias.LayoutView.Elements
             }
             foreach (PortableTrace trace in xUnit.trc)
             {
-                Trace auxTrace = new Trace(this);
+                Trace auxTrace = new Trace(this);                
                 auxTrace.portableElement = trace;
                 mcolTraces.Add(auxTrace);
-            }                
-        } //Estado actual del enclavamiento
+            }
+        }
+        
         public Common.layoutTraceStatus currentStatus { get; set; } //Estado actual del enclavamiento
         private byte mvarCurrentPosition;
         public byte currentPosition
@@ -93,6 +102,11 @@ namespace MontefaroMatias.LayoutView.Elements
                         if(!parseTraces(child)) 
                             return false;
                     }
+                    else if(child.Name.Equals("label"))
+                    {
+                        if(!parseLabel(child)) 
+                            return false;
+                    }
                 }                
             }
             return true;
@@ -116,7 +130,6 @@ namespace MontefaroMatias.LayoutView.Elements
             }
             return true;
         }
-
         private bool parseTraces(XmlNode node)
         {
             foreach (XmlNode child in node.ChildNodes)
@@ -183,7 +196,12 @@ namespace MontefaroMatias.LayoutView.Elements
             nuevo.Y = this.Y;
             return true;
         }
-
+        private bool parseLabel(XmlNode node)
+        {
+            labelX = parseInt(node, "x");
+            labelY = parseInt(node, "y");
+            return true;
+        }
         public override void compose(RenderTreeBuilder builder)
         {
             base.compose(builder);
@@ -192,9 +210,20 @@ namespace MontefaroMatias.LayoutView.Elements
             foreach (Frog frog in mcolFrogs)
                 frog.compose(builder);
             foreach (Trace trace in mcolTraces)
+            {
+                trace.resetContainer();
                 trace.compose(builder);
+                mergeContainer(trace);
+            }
+            if(labelX<0)
+                addLabel(true, (int)((minX + maxX) / 2), (int)((minY + maxY) / 2), 32, 32, name);
+            else
+                addLabel(false,labelX,labelY,32,32, name);
+
+                inflateContainer(10, 10);            
             closeContainerRegion();
         }
+        
         public class Trace:DynamicElement
         {
             public Trace(LayoutUnit parent):base()
@@ -217,6 +246,7 @@ namespace MontefaroMatias.LayoutView.Elements
                     salida.x1 = x1;
                     salida.y1 = y1;
                     salida.sel = layoutSelector;
+                    salida.ac = active;
                     return salida;
                 }                
             }
@@ -228,11 +258,11 @@ namespace MontefaroMatias.LayoutView.Elements
                 this.y0 = xTrace.y0;
                 this.x1 = xTrace.x1;
                 this.y1 = xTrace.y1;
+                this.active = xTrace.ac;
                 this.layoutSelector = xTrace.sel;
             } 
             public LayoutUnit parent { get; set; } //Referencia al padre de este trazo.
             public bool active { get; set; } //Indica si este trazo es activo o no
-
 
             internal string mainColor
             {
@@ -286,6 +316,7 @@ namespace MontefaroMatias.LayoutView.Elements
             public int x1 { get; set; }
             public int y1 { get; set; }
             public int sel { get; set; }
+            public bool ac { get; set; } //Trazo activo.
         }
         public class Frog:DynamicElement
         {
@@ -366,6 +397,10 @@ namespace MontefaroMatias.LayoutView.Elements
     public class PortableLayoutUnit:PortableElement
     {
         public int id { get; set; }
+        public int lbx {  get; set; }
+        public int lby { get; set; }
+        public byte pos { get; set; }
+        public byte sta {  get; set; }        
         public List<LayoutUnit.PortableFrog> frg { get; set; }
         public List<LayoutUnit.PortableTrace> trc { get; set; }
         public PortableLayoutUnit() : base(6) 

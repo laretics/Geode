@@ -1,12 +1,19 @@
 ﻿@using MontefaroMatias.LayoutView.Elements
 @using Microsoft.AspNetCore.Components.Rendering
-<svg width="@width" height="@height" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100%" height="100%" fill="black" />
-    @foreach (MontefaroMatias.LayoutView.Elements.Element el in Drawables)
-    {
-        @getFragment(el)
-    }
-</svg>
+@if(null==Drawables)
+{
+    <p>There is nothing to draw here.</p>
+}
+else
+{
+    <svg width="@width" height="@height" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="black" />
+        @foreach (MontefaroMatias.LayoutView.Elements.Element el in Drawables)
+        {
+            @getFragment(el)
+        }
+    </svg>
+}
 @code 
 {
     private RenderFragment getFragment(MontefaroMatias.LayoutView.Elements.Element rhs) 
@@ -18,7 +25,7 @@
     [Parameter]
     public int height { get; set; } = 100;
     [Parameter]
-    public List<Element> Drawables{ get; set; }
+    public List<Element>? Drawables{ get; set; }
     [Parameter]
     public EventCallback<List<Element>> DrawablesChanged { get; set; }
 }

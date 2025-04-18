@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MontefaroMatias.LayoutView.Elements;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -13,10 +15,27 @@ namespace MontefaroMatias.Locking
     /// </summary>
     public class LockOperation:BasicAtom
     {
-        public string name { get;private set; }
+        public string id { get;private set; } //Código de la orden
+        public string name { get;private set; } //Nombre público de la orden
         public string? groupId { get;private set; }
         public string origin { get;private set; }
         public string destination { get;private set; }
+        public bool shunting { get; private set; } //Indica si la orden es de maniobra o no.
+        public portableOp portableElement
+        {
+            get
+            {
+                portableOp portableOp = new portableOp();
+                portableOp.setBase(0, 0, name);
+                portableOp.id = id;
+                portableOp.gr = groupId;
+                portableOp.or = origin;
+                portableOp.ds = destination;
+                portableOp.sh = shunting ? "1" : "0";
+                return portableOp;
+            }
+        }
+
         public List<string> colKeys { get; private set; } //Lista de elementos donde se hace click para activar la orden.
         public List<string> colPreviousFree { get; private set; } //Lista de circuitos a comprobar que están libres.
         public List<string> colLockCircuits { get; private set; } //Lista de circuitos que se deben marcar como enclavados.
@@ -33,6 +52,7 @@ namespace MontefaroMatias.Locking
             colPreviousFree = new List<string>();
             colLockCircuits = new List<string>();
 
+            id = string.Empty;
             name = string.Empty;
             origin = string.Empty;
             destination = string.Empty;
@@ -46,7 +66,6 @@ namespace MontefaroMatias.Locking
             }
             return true;
         }
-
 
         internal bool parseOrders(XmlNode node)
         {
@@ -80,6 +99,9 @@ namespace MontefaroMatias.Locking
         internal override bool deserialize(XmlNode node)
         {
             string? auxCadena = parseString(node, "id");
+            if(null==auxCadena) return false;
+            id= auxCadena;
+            auxCadena = parseString(node, "name");
             if (null == auxCadena) return false;
             name = auxCadena;
             groupId = parseString(node, "group");
@@ -89,8 +111,10 @@ namespace MontefaroMatias.Locking
             auxCadena = parseString(node, "destination");
             if (null == auxCadena) return false;
             destination = auxCadena;
+            auxCadena = parseString(node, "shunting");
+            shunting = (null != auxCadena&&auxCadena.ToUpper().StartsWith("TRUE"));
             auxCadena = parseString(node, "key");
-            if (null == auxCadena) return false;
+            if (null == auxCadena) return false;            
             colKeys = auxCadena.Split(",").ToList();
             foreach (XmlNode child in node.ChildNodes) 
             {
@@ -115,6 +139,30 @@ namespace MontefaroMatias.Locking
                 }
             }
             return true;
+        }
+    }
+    public class portableOp:PortableElement
+    {
+        public portableOp() : base(255) 
+        { 
+            id=string.Empty;
+            or = string.Empty;
+            ds = string.Empty;
+            sh = string.Empty;
+        }
+        public string id { get; set; } //Código de la orden
+        public string? gr { get; set; } //Grupo
+        public string or { get; set; } //Origin
+        public string ds { get; set; } //Destination
+        public string sh { get; set; } //Indica si la orden es de maniobra o no.   
+    }
+
+    public class portableOrders
+    {
+        public List<portableOp> or { get; set; }
+        public portableOrders()
+        {
+            or = new List<portableOp>();
         }
     }
 }

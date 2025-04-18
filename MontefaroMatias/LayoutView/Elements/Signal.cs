@@ -13,7 +13,9 @@ namespace MontefaroMatias.LayoutView.Elements
     public class Signal:DynamicElement
     {
         public int id {  get; set; }
-        public bool shunt { get; set; } 
+        public bool shunt { get; set; }
+        public string? circuit { get; set; } //Circuito que protege esta señal
+        public string? advance { get; set; } //Señal de avanzada de esta señal        
         public Common.Orientation orientation { get; set; }
 
         public override PortableElement portableElement 
@@ -25,6 +27,7 @@ namespace MontefaroMatias.LayoutView.Elements
                 salida.or = (byte)orientation;
                 salida.sh = shunt;
                 salida.id = id;
+                salida.com = (byte)Order;
                 return salida;
             }
         }
@@ -35,6 +38,7 @@ namespace MontefaroMatias.LayoutView.Elements
             this.orientation=(Common.Orientation)xSignal.or;
             this.shunt = xSignal.sh;
             this.id = xSignal.id;
+            this.Order = (Common.orderType)xSignal.com;
         }
 
         private Common.orderType mvarOrder;
@@ -43,12 +47,12 @@ namespace MontefaroMatias.LayoutView.Elements
             get => mvarOrder;
             set
             {
-                if(mvarOrder!=value)
+                if (mvarOrder != value)
                 {
                     mvarOrder = value;
                     this.HasChanged = true;
                 }
-            }        
+            }
         }
         public Signal() : base() 
         {
@@ -63,13 +67,14 @@ namespace MontefaroMatias.LayoutView.Elements
             name = key;
             this.Order = orderType.toParada;
         }
-
         public override bool parse(XmlNode node)
         {
             if(!base.parse(node)) return false;
             id = parseInt(node, "id");            
             shunt = parseBoolean(node, "shunt");
             orientation = parseOrientation(node, "orientation");
+            circuit = parseString(node, "circuit");
+            advance = parseString(node, "advance");
             return true;
         }
         public override void compose(RenderTreeBuilder builder)
@@ -83,30 +88,32 @@ namespace MontefaroMatias.LayoutView.Elements
                     addLine(0, 5, 0, 22, MastilColor, 2); //Mástil
                     addSquare(0, 10, 9, SquareColor); //Rebase autorizado
                     addCircle(0, 0, 5, CircleColor); //Círculo
-                    addText(- 8, 40, name, "white");
+                    labelX = -16;labelY = 22;
                     break;
                 case Common.Orientation.South:
                     addLine(- 5, - 5, 5, - 5, MastilColor, 3); //Base
                     addLine(0, - 4, 0, 14, MastilColor, 2); //Mástil
                     addSquare(0, 9, 9, SquareColor); //Rebase autorizado
                     addCircle(0, 19, 5, CircleColor); //Círculo
-                    addText(-8, -10, name, "white");
+                    labelX = -16; labelY = -28;
                     break;
                 case Common.Orientation.East:
                     addLine(- 2, -5,- 2, 5, MastilColor, 3); //Base
                     addLine(- 2, 0, 16, 0, MastilColor, 2); //Mástil
                     addSquare(11, 0, 9, SquareColor); //Rebase autorizado
                     addCircle(21, 0, 5, CircleColor); //Círculo
-                    addText(-28,6, name, "white");
+                    labelX = -30; labelY = -12;
                     break;
                 case Common.Orientation.West:
                     addLine(23, - 5, 23, 5, MastilColor, 3); //Base
                     addLine( 5, 0, 22, 0, MastilColor, 2); //Mástil
                     addSquare( 10, 0, 9, SquareColor); //Rebase autorizado
                     addCircle(0, 0, 5, CircleColor); //Círculo
-                    addText(28, 6, name, "white");
+                    labelX = 20; labelY = -12;
                     break;
             }
+            addLabel(false,labelX, labelY,32,32,name);
+            inflateContainer(10, 10);
             closeContainerRegion();
         }
 
@@ -186,7 +193,8 @@ namespace MontefaroMatias.LayoutView.Elements
         { }
         public int id { get; set; }
         public bool sh { get; set; }
-        public byte or { get; set; } 
+        public byte or { get; set; }
+        public byte com { get; set; } //Orden actual de esta señal
     }
     
 }

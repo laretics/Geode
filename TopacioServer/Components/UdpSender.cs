@@ -1,33 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using MontefaroMatias.LayoutView;
+﻿using MontefaroMatias.LayoutView;
 using MontefaroMatias.LayoutView.Elements;
-using System.Diagnostics.SymbolStore;
-
-namespace MontefaroMatias
+using System.Net;
+using System.Net.Sockets;
+namespace TopacioServer.Components
 {
-    /// <summary>
-    /// Objeto para enviar órdenes a los elementos bajo control mediante paquetes UDP.
-    /// </summary>
-    public class IpSender
+    public class UdpSender
     {
-        internal const string MULTICAST_IP = "239.255.0.1";
-        internal const int ETHERNET_UDP_PORT = 1101; //Puerto para la recepción de datos del enclavamiento.
-
+        private IPEndPoint mvarDestinationPoint;
+        public UdpSender(string? destinationIp, string? port)
+        {
+            IPAddress? auxAddress;
+            int auxPort = 5000;
+            if(!IPAddress.TryParse(destinationIp, out auxAddress))
+                auxAddress = IPAddress.Broadcast;
+            int.TryParse(port, out auxPort);
+            mvarDestinationPoint = new IPEndPoint(auxAddress, auxPort);
+        }
         public bool send(Topology topo)
         {
             bool salida = true;
             List<Signal> auxSignals = topo.signalsChanged();
             List<LayoutUnit> auxCircuits = topo.circuitsChanged();
-            int auxPayLoad = 8+  //Cabecera
-                (auxSignals.Count*2)+ //Id Señal + valor
-                (auxCircuits.Count*2); //Id Circuito + valor
-
+            int auxPayLoad = 8 +  //Cabecera
+                (auxSignals.Count * 2) + //Id Señal + valor
+                (auxCircuits.Count * 2); //Id Circuito + valor
             byte[] paquete = new byte[auxPayLoad];
             int puntero = 0;
             paquete[puntero++] = 11; //Cabecera 0
@@ -38,12 +34,12 @@ namespace MontefaroMatias
             paquete[puntero++] = 1; //Instrucción de actualización
             paquete[puntero++] = (byte)auxSignals.Count; //Número de señales que cambian
             paquete[puntero++] = (byte)auxCircuits.Count; //Número de circuitos que cambian
-            foreach(Signal auxSignal in auxSignals)
+            foreach (Signal auxSignal in auxSignals)
             {
                 paquete[puntero++] = (byte)auxSignal.id;
                 paquete[puntero++] = (byte)auxSignal.Order;
             }
-            foreach(LayoutUnit circuit in auxCircuits)
+            foreach (LayoutUnit circuit in auxCircuits)
             {
                 paquete[puntero++] = (byte)circuit.id;
                 paquete[puntero++] = (byte)circuit.currentPosition;
@@ -52,8 +48,7 @@ namespace MontefaroMatias
             UdpClient auxClient = new UdpClient();
             try
             {                
-                IPEndPoint auxPunto = new IPEndPoint(IPAddress.Parse(MULTICAST_IP), ETHERNET_UDP_PORT);
-                auxClient.Send(paquete,paquete.Length, auxPunto);
+                auxClient.Send(paquete, paquete.Length, mvarDestinationPoint);
                 Console.WriteLine(string.Format("Sent {0} bytes.", paquete.Length));
             }
             catch (Exception e)

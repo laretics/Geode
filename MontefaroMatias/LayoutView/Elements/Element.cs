@@ -56,11 +56,6 @@ namespace MontefaroMatias.LayoutView.Elements
 
         protected RenderTreeBuilder mvarBuilder { get; set; }
 
-        //Coordenadas del rectángulo contenedor de este elemento
-        protected long minX { get; set; }
-        protected long maxX { get; set; }
-        protected long minY { get; set; }
-        protected long maxY { get; set; }
 
         //Estas funciones llaman a las correspondientes de la estructura que componen los trazos.
         protected void addCircle(int xx, int yy, int r, string fill)
@@ -88,7 +83,6 @@ namespace MontefaroMatias.LayoutView.Elements
         }
         protected void addRectangle(int xx0, int yy0, int xx1, int yy1, string fill)
         {
-            //<rect width="200" height="100" x="10" y="10" rx="20" ry="20" fill="blue" />
             mvarBuilder.OpenElement(20, "rect");
             mvarBuilder.AddAttribute(21, "x", xScale(xx0));
             mvarBuilder.AddAttribute(22, "y", yScale(yy0));
@@ -97,6 +91,7 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.AddAttribute(25, "fill", fill);
             mvarBuilder.CloseElement();
         }
+
         protected void addSquare(int xx, int yy, int side, string fill)
         {
             int mitad = side / 2;
@@ -112,20 +107,41 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.AddContent(34, text);
             mvarBuilder.CloseElement();
         }
-        protected long xScale(int xx) 
+        
+        protected int openForeign(bool absolute,int xx, int yy, int w, int h )
         {
-            long salida = X + xx;
-            if (salida < minX) minX = salida;
-            if (salida > maxX) maxX = salida;
-            return salida;
+            mvarBuilder.OpenElement(30, "foreignObject");
+            if(absolute)
+            {
+                mvarBuilder.AddAttribute(31, "x", xx);
+                mvarBuilder.AddAttribute(32, "y", yy);
+            }
+            else
+            {
+                mvarBuilder.AddAttribute(31, "x", xScale(xx));
+                mvarBuilder.AddAttribute(32, "y", yScale(yy));
+            }
+            mvarBuilder.AddAttribute(33, "width", w);
+            mvarBuilder.AddAttribute(34, "height", h);
+            return 35;
         }
-        protected long yScale(int yy)
+        protected void closeForeign()
         {
-            long salida = Y + yy;
-            if (salida < minY) minY = salida;
-            if (salida > maxY) maxY = salida;
-            return salida;
+            mvarBuilder.CloseElement();
         }
+
+        protected void addLabel(bool absolute,int xx, int yy, int w, int h, string? text)
+        {
+            int num = openForeign(absolute,xx, yy, w, h);
+            mvarBuilder.OpenElement(num++, "p");
+            mvarBuilder.OpenElement(num++, "small");
+            mvarBuilder.AddContent(num++,text);
+            mvarBuilder.CloseElement();
+            mvarBuilder.CloseElement();
+            mvarBuilder.CloseElement();
+        }
+        protected virtual long xScale(int xx){ return X + xx;}
+        protected virtual long yScale(int yy) { return Y + yy;}
 
         //Parámetros XML
         protected string? parseString(XmlNode node,string attributeName)

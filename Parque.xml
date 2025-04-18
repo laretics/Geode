@@ -6,16 +6,17 @@
 		<signal id="1" name="A2" x="40" y="90" shunt="false" orientation ="east"/>
 		<signal id="2" name="A1" x="40" y="200" shunt="false" orientation ="east"/>
 
-		<signal id="3" name="E2" x="180" y="90" shunt="true" orientation ="east"/>
-		<signal id="4" name="E1" x="180" y="200" shunt="true" orientation ="east"/>
+		<signal id="3" name="E2" x="180" y="90" shunt="true" orientation ="east" advance="A2" circuit="C03"/>
+		<signal id="4" name="E1" x="180" y="200" shunt="true" orientation ="east" advance="A1" circuit="C04"/>
 
-		<signal id="5" name="S1" x="608" y="200" shunt="false" orientation="east"/>
-		<signal id="6" name="S2" x="608" y="175" shunt="false" orientation="east"/>
-		<signal id="7" name="S3" x="608" y="150" shunt="false" orientation="east"/>
-		<signal id="8" name="S4" x="608" y="125" shunt="false" orientation="east"/>
-		<signal id="9" name="I1" x="608" y="90" shunt="false" orientation="east"/>
+		<signal id="5" name="S1" x="608" y="200" shunt="false" orientation="east" circuit="C06"/>
+		<signal id="6" name="S2" x="608" y="175" shunt="false" orientation="east" circuit="C06"/>
+		<signal id="7" name="S3" x="608" y="150" shunt="false" orientation="east" circuit="C08"/>
+		<signal id="8" name="S4" x="608" y="125" shunt="false" orientation="east" circuit="C08"/>
+		<signal id="9" name="I1" x="608" y="90" shunt="false" orientation="east" circuit="C07"/>
 		<!-- Sections-->
 		<section id="1" name="C01" x="10" y="80">
+			<label x="108" y="0"/>
 			<traces>
 				<v id="0">
 					<active>
@@ -26,6 +27,7 @@
 			</traces>
 		</section>
 		<section id="2" name="C02" x="10" y="190">
+			<label x="108" y="-24"/>
 			<traces>
 				<v id="0">
 					<active>
@@ -37,6 +39,7 @@
 		</section>
 		<crossing x="95" y="135" l="150" id="1" name="PN1" orientation="north"/>
 		<section id="3" name="C03" x="175" y="80">
+			<label x="90" y="0"/>
 			<frogs>
 				<frog x="40" y="-3" w="7" h="7" />
 				<frog x="130" y="57" w="7" h="7" />
@@ -87,6 +90,7 @@
 			</traces>
 		</section>
 		<section id="4" name="C04" x="175" y="190">
+			<label x="90" y="-24"/>
 			<frogs>
 				<frog x="130" y="-3" w="7" h="7"/>				
 			</frogs>
@@ -115,6 +119,7 @@
 			</traces>
 		</section>
 		<section id="5" name="M4" x="400" y="115">
+			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -125,6 +130,7 @@
 		</section>
 		<platform x="400" y="120" l="175" orientation="north"/>
 		<section id="6" name="M3" x="400" y="140">
+			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -135,6 +141,7 @@
 		</section>
 		<platform x="400" y="145" l="175" orientation="north"/>
 		<section id="7" name="M2" x="400" y="165">
+			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -145,6 +152,7 @@
 		</section>
 		<platform x="400" y="170" l="175" orientation="north"/>
 		<section id="8" name="M1" x="400" y="190">
+			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -155,6 +163,7 @@
 		</section>
 		<platform x="400" y="195" l="175" orientation="north"/>
 		<section id="9" name="C05" x="400" y="80">
+			<label x="82" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -164,6 +173,7 @@
 			</traces>
 		</section>
 		<section id="10" name="C08" x="605" y="115">
+			<label x="128" y="0"/>
 			<frogs>
 				<frog x="100" y="-3" w="7" h="7"/>
 			</frogs>
@@ -192,6 +202,7 @@
 			</traces>
 		</section>
 		<section id="11" name="C07" x="605" y="80">
+			<label x="128" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -201,6 +212,7 @@
 			</traces>
 		</section>
 		<section id="12" name="C06" x="605" y="190">
+			<label x="128" y="-24"/>
 			<frogs>
 				<frog x="100" y="-3" w="7" h="7"/>
 			</frogs>
@@ -235,30 +247,37 @@
 	</views>
 	<itineraries>
 		<!-- Descripción de los posibles itinerarios que se pueden crear con este enclavamiento -->		
-		<itin id="Entrada vía 1" group="Entradas" origin="C02" destination="M1" key="E1,M1">
-			<pre ckfree="C02,C04,M1,C06"/>
+		<itin id="C02M1" name="Entrada vía 1" group="Entradas" origin="E1" destination="M1" key="E1,M1">
+			<pre ckfree="C04,M1"/>
 			<chg>
 				<pos cir="C04" set="0"/>
-				<pos cir="C06" set="0"/>
 				<signal id="A1" set="free"/>
 				<signal id="E1" set="stopAdvice"/>
 				<signal id="S1" set="stop"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C02,C04,M1"/>
+			<post setlock="C04,M1"/>
 		</itin>
-		<itin id="Salida vía 1" group="Salidas" origin="M1" destination="C06" key="S1,C06">
+		<itin id="SHC02M1" name="Entrada maniobra vía 1" group="Entradas" origin="E1" destination="M1" key="E1,M1" shunting="true">
+			<pre ckfree="C04"/>
+			<chg>
+				<pos cir="C04" set="0"/>
+				<signal id="A1" set="stopAdvice"/>
+				<signal id="E1" set="override"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C04,M1"/>
+		</itin>
+		<itin id="M1C06" name="Salida vía 1" group="Salidas" origin="M1" destination="S1" key="S1,C06">
 			<pre ckfree="C06"/>
 			<chg>
 				<pos cir="C06" set="0"/>
-				<signal id="A1" set="stopAdvice"/>
-				<signal id="E1" set="stop"/>
 				<signal id="S1" set="free"/>
 			</chg>
-			<post setlock="M1,C06"/>
+			<post setlock="C06"/>
 		</itin>
-		<itin id="Paso directo vía 1" group="Pasos" origin="C02" destination="C06" key="E1,S1,C06">
-			<pre ckfree="C02,C04,M1,C06"/>
+		<itin id="C02M1C06" name="Paso directo vía 1" group="Pasos" origin="E1" destination="S1" key="E1,S1,C06">
+			<pre ckfree="C04,M1,C06"/>
 			<chg>
 				<pos cir="C04" set="0"/>
 				<pos cir="C06" set="0"/>
@@ -267,32 +286,29 @@
 				<signal id="S1" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C02,C04,M1,C06"/>
+			<post setlock="C04,M1,C06"/>
 		</itin>
-		<itin id="Entrada vía 2" group="Entradas" origin="C02" destination="M2" key="E1,M2">
-			<pre ckfree="C02,C04,M2,C06"/>
+		<itin id="C02M2" name="Entrada vía 2" group="Entradas" origin="E1" destination="M2" key="E1,M2">
+			<pre ckfree="C04,M2"/>
 			<chg>
 				<pos cir="C04" set="1"/>
-				<pos cir="C06" set="1"/>
 				<signal id="A1" set="warning"/>
 				<signal id="E1" set="stopAdvice"/>
 				<signal id="S2" set="stop"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C02,C04,M2"/>
+			<post setlock="C04,M2"/>
 		</itin>
-		<itin id="Salida vía 2" group="Salidas" origin="M2" destination="C06" key="S2,C06">
+		<itin id="M2C06" name="Salida vía 2" group="Salidas" origin="M2" destination="S2" key="S2,C06">
 			<pre ckfree="C06"/>
 			<chg>
 				<pos cir="C06" set="1"/>
-				<signal id="A1" set="stopAdvice"/>
-				<signal id="E1" set="stop"/>
 				<signal id="S2" set="free"/>
 			</chg>
-			<post setlock="M2,C06"/>
+			<post setlock="C06"/>
 		</itin>
-		<itin id="Paso directo vía 2" group="Pasos" origin="C02" destination="C06" key="E1,S2,C06">
-			<pre ckfree="C02,C04,M2,C06"/>
+		<itin id="C02M2C06" name="Paso directo vía 2" group="Pasos" origin="E1" destination="S2" key="E1,S2,C06">
+			<pre ckfree="C04,M2,C06"/>
 			<chg>
 				<pos cir="C04" set="1"/>
 				<pos cir="C06" set="1"/>
@@ -301,32 +317,29 @@
 				<signal id="S2" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C02,C04,M2,C06"/>
+			<post setlock="C04,M2,C06"/>
 		</itin>
-		<itin id="Entrada vía 3" group="Entradas" origin="C01" destination="M3" key="E2,M3">
-			<pre ckfree="C01,C03,M3,C08"/>
+		<itin id="C01M3" name="Entrada vía 3" group="Entradas" origin="E2" destination="M3" key="E2,M3">
+			<pre ckfree="C03,M3"/>
 			<chg>
 				<pos cir="C03" set="1"/>
-				<pos cir="C08" set="1"/>
 				<signal id="A2" set="warning"/>
 				<signal id="E2" set="stopAdvice"/>
 				<signal id="S3" set="stop"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C01,C03,M3"/>
+			<post setlock="C03,M3"/>
 		</itin>
-		<itin id="Salida vía 3" group="Salidas" origin="M3" destination="C08" key="S3,C08">
+		<itin id="M3C08" name="Salida vía 3" group="Salidas" origin="M3" destination="S3" key="S3,C08">
 			<pre ckfree="C08"/>
 			<chg>
 				<pos cir="C08" set="1"/>
-				<signal id="A2" set="stopAdvice"/>
-				<signal id="E2" set="stop"/>
 				<signal id="S3" set="free"/>
 			</chg>
-			<post setlock="M3,C08"/>
+			<post setlock="C08"/>
 		</itin>
-		<itin id="Paso directo vía 3" group="Pasos" origin="C01" destination="C08" key="E2,S3,C08">
-			<pre ckfree="C01,C03,M3,C08"/>
+		<itin id="C01M3C08" name="Paso directo vía 3" group="Pasos" origin="E2" destination="S3" key="E2,S3,C08">
+			<pre ckfree="C03,M3,C08"/>
 			<chg>
 				<pos cir="C03" set="1"/>
 				<pos cir="C08" set="1"/>
@@ -335,32 +348,29 @@
 				<signal id="S3" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C01,C03,M3,C08"/>
+			<post setlock="C03,M3,C08"/>
 		</itin>
-		<itin id="Entrada vía 4" group="Entradas" origin="C01" destination="M4" key="E2,M4">
-			<pre ckfree="C01,C03,M4,C08"/>
+		<itin id="C01M4" name="Entrada vía 4" group="Entradas" origin="E2" destination="M4" key="E2,M4">
+			<pre ckfree="C03,M4"/>
 			<chg>
 				<pos cir="C03" set="2"/>
-				<pos cir="C08" set="0"/>
 				<signal id="A2" set="warning"/>
 				<signal id="E2" set="stopAdvice"/>
 				<signal id="S4" set="stop"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C01,C03,M4"/>
+			<post setlock="C03,M4"/>
 		</itin>
-		<itin id="Salida vía 4" group="Salidas" origin="M4" destination="C08" key="S4,C08">
+		<itin id="M4C08" name="Salida vía 4" group="Salidas" origin="M4" destination="S4" key="S4,C08">
 			<pre ckfree="C08"/>
 			<chg>
 				<pos cir="C08" set="0"/>
-				<signal id="A3" set="stopAdvice"/>
-				<signal id="E3" set="stop"/>
 				<signal id="S4" set="free"/>
 			</chg>
-			<post setlock="M4,C08"/>
+			<post setlock="C08"/>
 		</itin>		
-		<itin id="Paso directo vía 4" group="Pasos" origin="C01" destination="C08" key="E2,S4,C08">
-			<pre ckfree="C01,C03,M4,C08"/>
+		<itin id="C01M4C08" name="Paso directo vía 4" group="Pasos" origin="E2" destination="S4" key="E2,S4,C08">
+			<pre ckfree="C03,M4,C08"/>
 			<chg>
 				<pos cir="C03" set="2"/>
 				<pos cir="C08" set="0"/>
@@ -369,10 +379,10 @@
 				<signal id="S4" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C01,C03,M4,C08"/>
+			<post setlock="C03,M4,C08"/>
 		</itin>
-		<itin id="Paso directo vía 5" group="Pasos" origin="C01" destination="C07" key="E2,I1">
-			<pre ckfree="C01,C03,C05,C07"/>
+		<itin id="C01C05C07" name="Paso directo vía 5" group="Pasos" origin="E2" destination="I1" key="E2,I1">
+			<pre ckfree="C03,C05,C07"/>
 			<chg>
 				<pos cir="C03" set="0"/>
 				<signal id="A2" set="free"/>
@@ -380,10 +390,10 @@
 				<signal id="I1" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C01,C03,C05,C07"/>
+			<post setlock="C03,C05,C07"/>
 		</itin>
-		<itin id="Entrada vía 5" group="Entradas" origin="C01" destination="C05" key="E2,C05">
-			<pre ckfree="C01,C03,C05"/>
+		<itin id="C01C05" name="Entrada vía 5" group="Entradas" origin="E2" destination="C05" key="E2,C05">
+			<pre ckfree="C03,C05"/>
 			<chg>
 				<pos cir="C03" set="0"/>
 				<signal id="A2" set="free"/>
@@ -391,16 +401,14 @@
 				<signal id="I1" set="stop"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C01,C03,C05"/>
+			<post setlock="C03,C05"/>
 		</itin>
-		<itin id="Salida vía 5" group="Salidas" origin="C05" destination="C07" key="I1,C07">
+		<itin id="C05C07" name="Salida vía 5" group="Salidas" origin="C05" destination="I1" key="I1,C07">
 			<pre ckfree="C07"/>
 			<chg>				
-				<signal id="A2" set="stopAdvice"/>
-				<signal id="E2" set="stop"/>
 				<signal id="I1" set="free"/>
 			</chg>
-			<post setlock="C05,C07"/>
+			<post setlock="C07"/>
 		</itin>
 	</itineraries>
 	<server>

@@ -1,7 +1,5 @@
-using System.Text.Json.Serialization;
+using TopacioServer.Components;
 using TopacioServer.Layout;
-
-const string ORIGINS_URI = "http://localhost:5154";
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -16,7 +14,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowBlazorClient",
     builder =>
     {
-        builder.WithOrigins(ORIGINS_URI) // Cambia esto al puerto de tu aplicación Blazor
+        builder.AllowAnyOrigin()
      .AllowAnyHeader()
      .AllowAnyMethod();
     });
@@ -25,7 +23,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowBlazorClient");
-TodoSample auxTodo = new TodoSample(app);
-LayoutController auxLayout = new LayoutController(app);
+Kernel mvarKernel = new Kernel();
+LayoutController auxLayout = new LayoutController(app, mvarKernel);
 
 app.Run();

@@ -37,7 +37,7 @@
     <Content Update="wwwroot\css\bootstrap.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\img\LOGOCFVM.gif">
+    <Content Update="wwwroot\img\logoShow.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\js\bootstrap.js">

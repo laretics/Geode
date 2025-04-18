@@ -2,8 +2,9 @@
 @using MontefaroMatias.LayoutView.Elements
 @using MontefaroMatias.Locking
 @inject TopacioClient mvarTopacioClient
+@inject StorageService mvarStorageService
 <div class="container-fluid p-5 bg-dark text-white text-center">
-    <img src="img/LOGOCFVM.gif" width="256">
+    
     <h3>Control de Tráfico Centralizado</h3>
     <MtCanvas width=830 height=250 @bind-Drawables="mcolDrawables"/>
 </div>
@@ -42,7 +43,9 @@
         <div class="col-md-4">
             <div class="btn-group btn-group-lg">
                 <button type="button" class="btn btn-primary" onclick="@clearElements">Clear</button>
-                <button type="button" class="btn btn-primary" onclick="@OnDai">DAI</button>
+                <button type="button" class="btn btn-primary" onclick="@InitOrder">Init</button>
+                <button type="button" class="btn btn-warning" onclick="@OnDai">DAI</button>
+                <button type="button" class="btn btn-primary" onclick="@OnOccupancy">Occ</button>
             </div>
         </div>
         <div class="col-md-4">
@@ -74,18 +77,171 @@
 </div>
 @code
 {
-    private MontefaroMatias.LayoutView.Topology mvartt;
+    private MontefaroMatias.LayoutView.Topology mvartt = new Topology();
     private List<Element> mcolDrawables { get; set; } = new List<Element>();
-    private MontefaroMatias.IpSender auxSender = new IpSender();
+    private Dictionary<string, DynamicElement> mcolDynamics = new Dictionary<string, DynamicElement>();
+    private DynamicElement? mvarOrigin = null;
+    private portableOrders mcolOrders { get; set; } = new portableOrders();
+    //private MontefaroMatias.IpSender auxSender = new IpSender();
+    private List<portableOp> mcolPossibleOrders = new List<portableOp>();
+    private bool mvarOccupancyRequested = false;
 
     protected async override Task OnInitializedAsync()
     {
-        Topology? auxTopo = await mvarTopacioClient.getTopology();
-        mvartt = (null == auxTopo) ? new Topology() : auxTopo;
+        PortableTopology? portaTopo = await mvarTopacioClient.getPortableTopology();
+        if (null != portaTopo)
+            mvartt.portableElement = portaTopo;
+
+        portableOrders? auxOrders = await mvarTopacioClient.getOrders();        
+        if (null != auxOrders)
+            mcolOrders = auxOrders;
+        mcolDynamics = mvartt.DynamicElements;
+
         mcolDrawables = mvartt.Elements;
-        DynamicElement.AddElementCallback = addElement;
+        DynamicElement.AddElementCallback = clickElement;
+        mvarStorageService.OnUpdateReceived += OnUpdateReceived;
         mvartt.Dai();
     }
+    protected async Task GetTopoAsync()
+    {
+        PortableTopology? portaTopo = await mvarTopacioClient.getPortableTopology();
+        if(null!=portaTopo)
+        {
+            foreach(PortableSignal sgn in portaTopo.sgn)
+            {
+                if(mvartt.Signals.ContainsKey(sgn.nme))
+                {
+                    Signal senal = mvartt.Signals[sgn.nme];
+                    senal.portableElement = sgn;
+                }                
+            }
+            foreach(PortableLayoutUnit cir in portaTopo.lyt)
+            {
+                if(mvartt.Circuits.ContainsKey(cir.nme))
+                {
+                    LayoutUnit circuito = mvartt.Circuits[cir.nme];
+                    circuito.portableElement = cir;
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// Este método se activa cada vez que haya recibido alguna notificación
+    /// desde el servidor. Permite que todos los observadores vean el mismo
+    /// estado en el enclavamiento.
+    /// </summary>
+    /// <returns></returns>
+    private async Task OnUpdateReceived()
+    {
+        await GetTopoAsync();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Primer paso:
+    /// * Anula la posible petición de transacción en curso
+    /// * Elimina la selección de todos los elementos
+    /// * Marca los elementos primarios
+    /// TODO: No debe poder marcar los elementos primarios que
+    ///         estén formando parte de un itinerario enclavado.
+    /// </summary>
+    private void InitOrder()
+    {
+        mvartt.ClearSelection();
+        mvarOrigin = null;
+        mcolPossibleOrders.Clear();
+        foreach (portableOp order in mcolOrders.or)
+        {
+            if (mcolDynamics.ContainsKey(order.or))
+                mcolDynamics[order.or].selected = true;
+        }
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// En el momento en que se hace click sobre un elemento
+    /// salta esta función.
+    /// </summary>
+    /// <param name="id"></param>
+    private void clickElement(string? id)
+    {
+        if(null!=id)
+        {
+            if (mcolDynamics.ContainsKey(id))
+            {
+                DynamicElement element = mcolDynamics[id];
+                if (element.selected)
+                    clickReference(element);
+            }
+        }
+    }
+    private async Task clickReference(DynamicElement rhs)
+    {
+        mvartt.ClearSelection(); //Primero quitamos las marcas en el enclavamiento
+        if(mvarOccupancyRequested)
+        {
+            mvarOrigin = null;
+            await mvarTopacioClient.occupancy(rhs.name);
+            mvarOccupancyRequested = false;
+            await GetTopoAsync();
+        }
+        else
+        {
+            if (null == mvarOrigin)
+            {
+                mvarOrigin = rhs;
+                foreach (portableOp candidate in mcolOrders.or)
+                {
+                    if (candidate.or.Equals(mvarOrigin.name))
+                    {
+                        mcolPossibleOrders.Add(candidate);
+                        //Marcamos el destino de esta orden para su selección.
+                        if (mcolDynamics.ContainsKey(candidate.ds))
+                        {
+                            DynamicElement destino = mcolDynamics[candidate.ds];
+                            destino.selected = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //Buscamos ahora entre las órdenes que tienen el destino en el elemento
+                //seleccionado y encargamos la orden al enclavamiento.
+                foreach (portableOp candidate in mcolPossibleOrders)
+                {
+                    if (candidate.ds.Equals(rhs.name))
+                    {
+                        //Tenemos la orden.
+                        await mvarTopacioClient.processOrder(candidate.id);
+                    }
+                }
+                //Tanto si la ha encontrado como si no, volvemos al estado de inicio.
+                mvarOrigin = null;
+                await GetTopoAsync();
+            }
+        }
+
+        StateHasChanged();
+    }
+    protected async Task OnDai()
+    {
+        mvartt.Dai();
+        await mvarTopacioClient.processOrder("DAI");
+        mvarOrigin = null;
+        StateHasChanged();
+    }
+    protected void OnOccupancy()
+    {
+        //Activamos la ocupación forzada.
+        mvarOccupancyRequested = true;
+        foreach(LayoutUnit elemento in mvartt.Circuits.Values)
+        {
+            elemento.selected = true;
+        }
+
+    }
+
     private bool hasToDrawTable{ get => mvartt.selOperations().Count < 5; }
     private bool hasToDrawDai{ get => mvartt.activeOperations.Count > 0; }
 
@@ -126,18 +282,20 @@
     private void ExecuteElement(LockOperation rhs)
     {
         mvartt.ExecuteOperation(rhs);
-        auxSender.send(mvartt);
+        //auxSender.send(mvartt);
         clearElements();
     }
     private void ClearElement(LockOperation rhs)
     {
         mvartt.UndoOperation(rhs);
-        auxSender.send(mvartt);
+        //auxSender.send(mvartt);
         clearElements();
     }
 
+
     private void clearElements()
     {
+        mvartt.ClearSelection();
         mvartt.selElements.Clear();
     }
 
@@ -151,42 +309,38 @@
                 mvartt.ChangeStatus("M1", Common.layoutTraceStatus.ltOccupied);
                 mvartt.ChangePosition("C04", 0);
                 mvartt.ChangePosition("C06", 0);
-                mvartt.ChangeOrder("A1", Common.orderType.toAvisoDeParada);
-                mvartt.ChangeOrder("E1", Common.orderType.toRebaseAutorizado);
+                mvartt.setSignalOrder("A1", Common.orderType.toAvisoDeParada);
+                mvartt.setSignalOrder("E1", Common.orderType.toRebaseAutorizado);
                 break;
             case 2:
                 mvartt.ChangeStatus("C02,C04", Common.layoutTraceStatus.ltShunt);
                 mvartt.ChangeStatus("M2", Common.layoutTraceStatus.ltOccupied);
                 mvartt.ChangePosition("C04", 1);
                 mvartt.ChangePosition("C06", 1);
-                mvartt.ChangeOrder("A1", Common.orderType.toAvisoDeParada);
-                mvartt.ChangeOrder("E1", Common.orderType.toRebaseAutorizado);                
+                mvartt.setSignalOrder("A1", Common.orderType.toAvisoDeParada);
+                mvartt.setSignalOrder("E1", Common.orderType.toRebaseAutorizado);
                 break;
             case 3:
                 mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
                 mvartt.ChangeStatus("M3", Common.layoutTraceStatus.ltOccupied);
                 mvartt.ChangePosition("C03", 1);
                 mvartt.ChangePosition("C08", 1);
-                mvartt.ChangeOrder("A2", Common.orderType.toAvisoDeParada);
-                mvartt.ChangeOrder("E2", Common.orderType.toRebaseAutorizado);                
+                mvartt.setSignalOrder("A2", Common.orderType.toAvisoDeParada);
+                mvartt.setSignalOrder("E2", Common.orderType.toRebaseAutorizado);
                 break;
             case 4:
                 mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
                 mvartt.ChangeStatus("M4", Common.layoutTraceStatus.ltOccupied);
                 mvartt.ChangePosition("C03", 2);
                 mvartt.ChangePosition("C08", 0);
-                mvartt.ChangeOrder("A2", Common.orderType.toAvisoDeParada);
-                mvartt.ChangeOrder("E2", Common.orderType.toRebaseAutorizado);
+                mvartt.setSignalOrder("A2", Common.orderType.toAvisoDeParada);
+                mvartt.setSignalOrder("E2", Common.orderType.toRebaseAutorizado);
                 break;
         }
-        auxSender.send(mvartt);
+        //auxSender.send(mvartt);
     }
 
 
 
-    protected void OnDai()
-    {
-        mvartt.Dai();
-        auxSender.send(mvartt);
-    }
+
     }
