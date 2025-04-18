@@ -15,18 +15,18 @@ namespace MontefaroMatias.Clients
     {
         internal List<Client> mcolClients; //Colección de clientes.
         internal Topology mvarTopology; //Topología de representación.
-        internal List<View> mcolViews; //Colección de vistas de enclavamiento.
+        internal Views mcolViews; //Colección de vistas de enclavamiento.
         public string fileName { get; set; } //Nombre del archivo.
         public string name { get;private set; } //Nombre del proyecto.
         public string version { get;private set; } //Versión del proyecto.
         public string hversion { get; private set; } //Versión del hardware (para incompatibilidades)
         public Topology Topology { get=> mvarTopology;}
-
-        internal LayoutSystem()
+        public Views Views { get => mcolViews; }
+        public LayoutSystem()
         {
             mcolClients = new List<Client>();
             mvarTopology = new Topology();
-            mcolViews = new List<View>();
+            mcolViews = new Views();
             fileName = string.Empty;
             name = string.Empty;
             version = "1.0";
@@ -43,11 +43,7 @@ namespace MontefaroMatias.Clients
             {
                 if (hijo.NodeType == XmlNodeType.Element)
                 {
-                    if(hijo.Name.Equals("server"))
-                    {
-                        //TODO: Descifrar info del servidor
-                    }
-                    else if(hijo.Name.Equals("clients"))
+                    if(hijo.Name.Equals("clients"))
                     {
                         if (!parseClients(hijo)) 
                             return false;
@@ -64,7 +60,8 @@ namespace MontefaroMatias.Clients
                     }
                     else if (hijo.Name.Equals("views"))
                     {
-
+                        if(!parseViews(hijo))
+                            return false;
                     }                    
                 }
             }               
@@ -77,6 +74,16 @@ namespace MontefaroMatias.Clients
                 Client cliente = new Client();
                 if(!cliente.parse(child)) return false;
                 mcolClients.Add(cliente);
+            }
+            return true;
+        }
+        protected bool parseViews(XmlNode node)
+        {
+            foreach (XmlNode child in node.ChildNodes)
+            {
+                View vista = new View();
+                if (!vista.parse(child)) return false;
+                mcolViews.Add(vista);
             }
             return true;
         }

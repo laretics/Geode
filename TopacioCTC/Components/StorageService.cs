@@ -16,6 +16,7 @@ namespace TopacioCTC.Components
         IServiceProvider mvarServiceProvider;
         private DateTime mvarPreviousUpdate = DateTime.MinValue;
         private Timer? mvarTimer;
+        public Views mcolViews { get; set; } = new Views();
         public event Func<Task>? OnUpdateReceived;
 
         public StorageService(IServiceProvider serviceProvider)

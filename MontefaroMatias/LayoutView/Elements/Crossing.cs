@@ -53,34 +53,38 @@ namespace MontefaroMatias.LayoutView.Elements
             length = parseInt(node,"l");
             return true;            
         }
-        public override void compose(RenderTreeBuilder builder)
+        public override bool compose(RenderTreeBuilder builder,View view)
         {
-            base.compose(builder);
-            openContainerRegion();
-            int mitad = length / 2;
-            int extremo1 = -1 * mitad;
-            int extremo2 = mitad;
-            int cuerno = 8;
-            switch(orientation)
+            if(base.compose(builder,view))
             {
-                case Common.Orientation.North:
-                case Common.Orientation.South:
-                    addLine(0, extremo1, 0, extremo2, statusColor, 4);
-                    addLine(-cuerno, extremo1 - cuerno, 0, extremo1, statusColor, 4);
-                    addLine(cuerno, extremo1 - cuerno, 0, extremo1, statusColor, 4);
-                    addLine(-cuerno, extremo2 + cuerno, 0, extremo2, statusColor, 4);
-                    addLine(cuerno, extremo2 + cuerno, 0, extremo2, statusColor, 4);
-                    break;
-                case Common.Orientation.East:
-                case Common.Orientation.West:
-                    addLine(extremo1,0,extremo2,0, statusColor, 4);
-                    addLine(extremo1 - cuerno,-cuerno, extremo1,0, statusColor, 4);
-                    addLine(extremo1 - cuerno,cuerno, extremo1,0, statusColor, 4);
-                    addLine(extremo2 + cuerno,-cuerno, extremo2,0, statusColor, 4);
-                    addLine(extremo2 + cuerno,cuerno, extremo2,0, statusColor, 4);
-                    break;
+                openContainerRegion();
+                int mitad = length / 2;
+                int extremo1 = -1 * mitad;
+                int extremo2 = mitad;
+                int cuerno = 8;
+                switch (orientation)
+                {
+                    case Common.Orientation.North:
+                    case Common.Orientation.South:
+                        addLine(0, extremo1, 0, extremo2, statusColor, 4);
+                        addLine(-cuerno, extremo1 - cuerno, 0, extremo1, statusColor, 4);
+                        addLine(cuerno, extremo1 - cuerno, 0, extremo1, statusColor, 4);
+                        addLine(-cuerno, extremo2 + cuerno, 0, extremo2, statusColor, 4);
+                        addLine(cuerno, extremo2 + cuerno, 0, extremo2, statusColor, 4);
+                        break;
+                    case Common.Orientation.East:
+                    case Common.Orientation.West:
+                        addLine(extremo1, 0, extremo2, 0, statusColor, 4);
+                        addLine(extremo1 - cuerno, -cuerno, extremo1, 0, statusColor, 4);
+                        addLine(extremo1 - cuerno, cuerno, extremo1, 0, statusColor, 4);
+                        addLine(extremo2 + cuerno, -cuerno, extremo2, 0, statusColor, 4);
+                        addLine(extremo2 + cuerno, cuerno, extremo2, 0, statusColor, 4);
+                        break;
+                }
+                closeContainerRegion();
+                return true;
             }
-            closeContainerRegion();
+            return false;
         }
         protected string statusColor
         {

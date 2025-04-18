@@ -202,26 +202,25 @@ namespace MontefaroMatias.LayoutView.Elements
             labelY = parseInt(node, "y");
             return true;
         }
-        public override void compose(RenderTreeBuilder builder)
+        public override bool compose(RenderTreeBuilder builder,View view)
         {
-            base.compose(builder);
+            if (!base.compose(builder,view)) return false;
             openContainerRegion();
             //addText(0, 0, name, "magenta");
             foreach (Frog frog in mcolFrogs)
-                frog.compose(builder);
+                frog.compose(builder,view);
             foreach (Trace trace in mcolTraces)
             {
                 trace.resetContainer();
-                trace.compose(builder);
+                trace.compose(builder,view);
                 mergeContainer(trace);
             }
-            if(labelX<0)
-                addLabel(true, (int)((minX + maxX) / 2), (int)((minY + maxY) / 2), 32, 32, name);
-            else
-                addLabel(false,labelX,labelY,32,32, name);
+            if(labelX>=0)
+                addBadge(false,labelX,labelY,32,32,"secondary", name);
 
-                inflateContainer(10, 10);            
+            inflateContainer(10, 10);            
             closeContainerRegion();
+            return true;
         }
         
         public class Trace:DynamicElement
@@ -292,10 +291,11 @@ namespace MontefaroMatias.LayoutView.Elements
                     return "magenta"; //Trazo por defecto
                 }
             }
-            public override void compose(RenderTreeBuilder builder)
+            public override bool compose(RenderTreeBuilder builder, View view)
             {
-                base.compose(builder);
+                if (!base.compose(builder, view)) return false;
                 addLine(x0, y0, x1, y1, mainColor, 5);
+                return true;
             }
             public override bool parse(XmlNode node)
             {
@@ -349,10 +349,11 @@ namespace MontefaroMatias.LayoutView.Elements
                 this.width = xFrog.wf;
                 this.height = xFrog.hf;
             }
-            public override void compose(RenderTreeBuilder builder)
+            public override bool compose(RenderTreeBuilder builder,View view)
             {
-                base.compose(builder);
+                if (!base.compose(builder, view)) return false;
                 addRectangle(xx, yy, xx+width, yy+height, myFill);
+                return true;
             }
             public override bool parse(XmlNode node)
             {

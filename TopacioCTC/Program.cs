@@ -5,15 +5,13 @@ using TopacioCTC;
 using TopacioCTC.Authentication;
 using TopacioCTC.Components;
 
-const string SERVER_URI = "http://localhost:5135";
-
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+string mvarServerUri = builder.Configuration["ServerUri"] ??"http://localhost:5000";
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton<StorageService>();
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(SERVER_URI) });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(mvarServerUri) });
 builder.Services.AddScoped<TopacioClient>(); //Cliente para obtener topología y estado del enclavamiento
 builder.Services.AddSingleton<StorageService>();
 builder.Services.AddScoped<TopacioAuthService>(

@@ -16,7 +16,7 @@
 		<signal id="9" name="I1" x="608" y="90" shunt="false" orientation="east" circuit="C07"/>
 		<!-- Sections-->
 		<section id="1" name="C01" x="10" y="80">
-			<label x="108" y="0"/>
+			<label x="108" y="4"/>
 			<traces>
 				<v id="0">
 					<active>
@@ -27,7 +27,7 @@
 			</traces>
 		</section>
 		<section id="2" name="C02" x="10" y="190">
-			<label x="108" y="-24"/>
+			<label x="108" y="-26"/>
 			<traces>
 				<v id="0">
 					<active>
@@ -39,7 +39,7 @@
 		</section>
 		<crossing x="95" y="135" l="150" id="1" name="PN1" orientation="north"/>
 		<section id="3" name="C03" x="175" y="80">
-			<label x="90" y="0"/>
+			<label x="90" y="4"/>
 			<frogs>
 				<frog x="40" y="-3" w="7" h="7" />
 				<frog x="130" y="57" w="7" h="7" />
@@ -90,7 +90,7 @@
 			</traces>
 		</section>
 		<section id="4" name="C04" x="175" y="190">
-			<label x="90" y="-24"/>
+			<label x="90" y="-26"/>
 			<frogs>
 				<frog x="130" y="-3" w="7" h="7"/>				
 			</frogs>
@@ -119,7 +119,6 @@
 			</traces>
 		</section>
 		<section id="5" name="M4" x="400" y="115">
-			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -130,7 +129,6 @@
 		</section>
 		<platform x="400" y="120" l="175" orientation="north"/>
 		<section id="6" name="M3" x="400" y="140">
-			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -141,7 +139,6 @@
 		</section>
 		<platform x="400" y="145" l="175" orientation="north"/>
 		<section id="7" name="M2" x="400" y="165">
-			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -152,7 +149,6 @@
 		</section>
 		<platform x="400" y="170" l="175" orientation="north"/>
 		<section id="8" name="M1" x="400" y="190">
-			<label x="16" y="0"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -163,7 +159,7 @@
 		</section>
 		<platform x="400" y="195" l="175" orientation="north"/>
 		<section id="9" name="C05" x="400" y="80">
-			<label x="82" y="0"/>
+			<label x="82" y="4"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -173,7 +169,7 @@
 			</traces>
 		</section>
 		<section id="10" name="C08" x="605" y="115">
-			<label x="128" y="0"/>
+			<label x="128" y="4"/>
 			<frogs>
 				<frog x="100" y="-3" w="7" h="7"/>
 			</frogs>
@@ -202,7 +198,7 @@
 			</traces>
 		</section>
 		<section id="11" name="C07" x="605" y="80">
-			<label x="128" y="0"/>
+			<label x="128" y="4"/>
 			<traces>
 				<v id="0" >
 					<active>
@@ -212,7 +208,7 @@
 			</traces>
 		</section>
 		<section id="12" name="C06" x="605" y="190">
-			<label x="128" y="-24"/>
+			<label x="128" y="-26"/>
 			<frogs>
 				<frog x="100" y="-3" w="7" h="7"/>
 			</frogs>
@@ -242,8 +238,12 @@
 		</section>	
 	</topology>	
 	<views>
-		<view id="0" name="CTC" x="0" y="0" w="1000" h="800" scale="1"/>
-	
+		<view id="0" name="Esquema principal" comment="Vista principal del enclavamiento a nivel de CTC" 
+			  x="0" y="0" w="1000" h="800" scale="1" icon="0"/>
+		<view id="1" name="Marratxinet" comment="Estación de Marratxinet desde las avanzadas en los túneles hasta los circuitos de salida"
+			  x="0" y="0" w="825" h="250" scale="1" icon="1"/>
+		<view id="2" name="Contenedor" comment="Estación secundaria junto a la Landaluce"
+			  x="0" y="0" w="1000" h="1000" scale ="1" icon="1"/>	
 	</views>
 	<itineraries>
 		<!-- Descripción de los posibles itinerarios que se pueden crear con este enclavamiento -->		
@@ -411,9 +411,6 @@
 			<post setlock="C07"/>
 		</itin>
 	</itineraries>
-	<server>
-		<ethernet ip="192.168.0.10" mask="24" mac="DE:AD:BE:EF:FE:00"/>
-	</server>
 	<clients>
 		<client name="Empty" id="0" interface="1">
 			<ethernet ip="192.168.0.254" mask="24" mac="DE:AD:BE:EF:FE:00"/>

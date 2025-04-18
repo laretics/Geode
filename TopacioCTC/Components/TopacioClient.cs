@@ -21,6 +21,18 @@ namespace TopacioCTC.Components
             }
             catch (Exception e) { return null; }
         }
+        public async Task<Views?> getViews()
+        {
+            string request = composeCommand("views");
+            try
+            {
+                HttpResponseMessage respuesta = await sendGetRequest(request);
+                HttpContent contenido = respuesta.Content;
+                Views? salida = await contenido.ReadFromJsonAsync<Views>();
+                return salida;
+            }
+            catch (Exception e) { return null; }
+        }
         public async Task<portableOrders?> getOrders()
         {
             string request = composeCommand("ordr");

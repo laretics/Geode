@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using MontefaroMatias.Clients;
 using MontefaroMatias.LayoutView;
 using MontefaroMatias.Locking;
@@ -11,6 +12,9 @@ namespace TopacioServer.Layout
     internal partial class TopologySerializerContext : JsonSerializerContext { }
     [JsonSerializable(typeof(portableOrders))]
     internal partial class OrdersSerializerContext : JsonSerializerContext { }
+    [JsonSerializable(typeof(Views))]
+    internal partial class ViewsSerializerContext : JsonSerializerContext { }
+
     public class LayoutController
     {
         private Kernel mvarKernel;
@@ -20,6 +24,7 @@ namespace TopacioServer.Layout
             RouteGroupBuilder? salida = app.MapGroup("layout");
             salida.MapGet("/topo", () => getTopology());
             salida.MapGet("/ordr", () => getOrders());
+            salida.MapGet("/views", () => getViews());
             salida.MapGet("/upd", () => getLastUpdate());
             salida.MapPost("/cmd", (HttpRequest request) => processOrder(request));
             salida.MapPost("/occ", (HttpRequest request) => processOccupancy(request));
@@ -27,31 +32,38 @@ namespace TopacioServer.Layout
 
         private PortableTopology getTopology()
         {
-            PortableTopology salida = mvarKernel.topology.portableElement;
+            PortableTopology salida = mvarKernel.mainSystem.Topology.portableElement;
             return salida;
         }
         private portableOrders getOrders()
         {
-            portableOrders salida = mvarKernel.topology.portableOrders;
+            portableOrders salida = mvarKernel.mainSystem.Topology.portableOrders;
             return salida;
+        }
+        private string getViews()
+        {
+            Views vistas = mvarKernel.mainSystem.Views;
+
+            string cadenaJson = JsonSerializer.Serialize(vistas, ViewsSerializerContext.Default.Views);
+            return cadenaJson;
         }
         //Obtiene el momento de la última actualización, para saber si el navegador
         //tiene que refrescar la imagen o no.
         private DateTime getLastUpdate()
         {
-            return mvarKernel.topology.lastUpdate;
+            return mvarKernel.mainSystem.Topology.lastUpdate;
         }
         private async Task processOrder(HttpRequest request)
         {
             using var reader = new StreamReader(request.Body);
             string orderId = await reader.ReadToEndAsync();
-            mvarKernel.topology.ExecuteOperation(orderId);
+            mvarKernel.mainSystem.Topology.ExecuteOperation(orderId);
         }
         private async Task processOccupancy(HttpRequest request)
         {
             using var reader = new StreamReader(request.Body);
             string orderId = await reader.ReadToEndAsync();
-            mvarKernel.topology.ExecuteOccupancy(orderId);   
+            mvarKernel.mainSystem.Topology.ExecuteOccupancy(orderId);   
         }
     }
 }

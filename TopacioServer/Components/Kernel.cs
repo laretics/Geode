@@ -9,22 +9,21 @@ namespace TopacioServer.Components
     /// </summary>
     public class Kernel
     {
-        internal Topology topology { get; set; }
+        internal LayoutSystem mainSystem { get; set; }
         internal UdpSender senderUdp { get; set; }
         internal bool udpEnabled { get; set; }
         public Kernel()
         {
-            topology = new Topology();
             XMLImporter auxImporter = new XMLImporter();
             string auxProjectFile = Environment.GetEnvironmentVariable("KERNEL_FILENAME") ?? "Parque.xml";
+            mainSystem = new LayoutSystem();
             if (auxImporter.loadScheme(auxProjectFile))
             {
                 LayoutSystem? auxSistema = auxImporter.getSystem();
-                if (null != auxSistema)
-                {
-                    topology = auxSistema.Topology;
-                    topology.Dai();
-                }
+                if (null!=auxSistema)
+                    mainSystem = auxSistema;
+                
+                mainSystem.Topology.Dai();
             }
             string? auxIpUDPDestination = Environment.GetEnvironmentVariable("UDP_DESTINATION");
             string? auxPortUDPDestination = Environment.GetEnvironmentVariable("UDP_PORT");
@@ -35,8 +34,8 @@ namespace TopacioServer.Components
         }
         private void doSendUdp()
         {
-            if(udpEnabled&&null!=senderUdp&&null!=topology)
-                senderUdp.send(topology);
+            if(udpEnabled&&null!=senderUdp&&null!=mainSystem)
+                senderUdp.send(mainSystem.Topology);
         }
     }
 }

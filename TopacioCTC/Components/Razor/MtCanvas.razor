@@ -1,12 +1,14 @@
 ﻿@using MontefaroMatias.LayoutView.Elements
 @using Microsoft.AspNetCore.Components.Rendering
-@if(null==Drawables)
+@if(null==Drawables||null==view)
 {
+    <PageTitle>Vista</PageTitle>
     <p>There is nothing to draw here.</p>
 }
 else
 {
-    <svg width="@width" height="@height" xmlns="http://www.w3.org/2000/svg">
+    <PageTitle>@view.Name</PageTitle>
+    <svg width="@view.Width" height="@view.Height" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="black" />
         @foreach (MontefaroMatias.LayoutView.Elements.Element el in Drawables)
         {
@@ -18,12 +20,13 @@ else
 {
     private RenderFragment getFragment(MontefaroMatias.LayoutView.Elements.Element rhs) 
     {
-        return builder => rhs.compose(builder);       
+        if (null != rhs && null!=view)
+            return builder => rhs.compose(builder, view);
+
+        return new RenderFragment((builder) => { });
     }
     [Parameter]
-    public int width { get; set; } = 100;
-    [Parameter]
-    public int height { get; set; } = 100;
+    public View? view { get; set; }
     [Parameter]
     public List<Element>? Drawables{ get; set; }
     [Parameter]

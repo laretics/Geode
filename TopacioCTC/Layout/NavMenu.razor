@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject TopacioClient mvarClient;
+@inject StorageService mvarStorage;
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <img src="img/logoShow.gif" width="90%" style="max-width:128px">
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -14,27 +16,26 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Inicio
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="layout">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Enclavamiento
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+        @foreach(View vista in mvarStorage.mcolViews)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@getHref(vista)">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> @vista.Name
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
-
+    private string getHref(View rhs) => string.Format("layout/{0}", rhs.Id);
+    protected async override Task OnInitializedAsync()
+    {
+        Views? views = await mvarClient.getViews();        
+        if (null != views)
+            mvarStorage.mcolViews = views;
+    }
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()

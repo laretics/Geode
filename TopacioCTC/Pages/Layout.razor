@@ -1,12 +1,10 @@
-﻿@page "/layout"
+﻿@page "/layout/{Id:int}"
 @using MontefaroMatias.LayoutView.Elements
 @using MontefaroMatias.Locking
 @inject TopacioClient mvarTopacioClient
 @inject StorageService mvarStorageService
-<div class="container-fluid p-5 bg-dark text-white text-center">
-    
-    <h3>Control de Tráfico Centralizado</h3>
-    <MtCanvas width=830 height=250 @bind-Drawables="mcolDrawables"/>
+<div class="d-flex justify-content-center align-items-center bg-black">
+    <MtCanvas View=view @bind-Drawables="mcolDrawables"/>
 </div>
 <div class="container-md">
     <div class="row">
@@ -16,31 +14,6 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            @if (hasToDrawTable)
-            {
-                <h4>Itinerarios posibles</h4>
-                <table class="table table-dark table-striped">
-                    <thead>
-                        <tr>
-                            <th>Exec</th>
-                            <th>Id</th>
-                            <th>Grupo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (LockOperation operation in lockOperations())
-                        {
-                            <tr>
-                                <td><button type="button" class="btn btn-dark" @onclick="@(() => ExecuteElement(operation))">...</button></td>
-                                <td>@operation.name</td>
-                                <td>@operation.groupId</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>             
-            }
-        </div>
-        <div class="col-md-4">
             <div class="btn-group btn-group-lg">
                 <button type="button" class="btn btn-primary" onclick="@clearElements">Clear</button>
                 <button type="button" class="btn btn-primary" onclick="@InitOrder">Init</button>
@@ -48,36 +21,14 @@
                 <button type="button" class="btn btn-primary" onclick="@OnOccupancy">Occ</button>
             </div>
         </div>
-        <div class="col-md-4">
-            @if(hasToDrawDai)
-            {
-                <h4>Itinerarios enclavados</h4>
-                <table class="table table-dark table-striped">
-                    <thead>
-                        <tr>
-                            <th>Exec</th>
-                            <th>Id</th>
-                            <th>Grupo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (LockOperation operation in activeOperations())
-                        {
-                            <tr>
-                                <td><button type="button" class="btn btn-dark" @onclick="@(() => ClearElement(operation))">...</button></td>
-                                <td>@operation.name</td>
-                                <td>@operation.groupId</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
     </div>
 </div>
 @code
 {
+    [Parameter]
+    public int Id { get; set; }
     private MontefaroMatias.LayoutView.Topology mvartt = new Topology();
+    private View? view { get; set; } = new View();
     private List<Element> mcolDrawables { get; set; } = new List<Element>();
     private Dictionary<string, DynamicElement> mcolDynamics = new Dictionary<string, DynamicElement>();
     private DynamicElement? mvarOrigin = null;
@@ -87,7 +38,7 @@
     private bool mvarOccupancyRequested = false;
 
     protected async override Task OnInitializedAsync()
-    {
+    {        
         PortableTopology? portaTopo = await mvarTopacioClient.getPortableTopology();
         if (null != portaTopo)
             mvartt.portableElement = portaTopo;
@@ -100,7 +51,10 @@
         mcolDrawables = mvartt.Elements;
         DynamicElement.AddElementCallback = clickElement;
         mvarStorageService.OnUpdateReceived += OnUpdateReceived;
-        mvartt.Dai();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        this.view = mvarStorageService.mcolViews.view(Id);
     }
     protected async Task GetTopoAsync()
     {

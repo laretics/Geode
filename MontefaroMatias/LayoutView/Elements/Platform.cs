@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,28 +41,29 @@ namespace MontefaroMatias.LayoutView.Elements
             orientation = parseOrientation(node, "orientation");
             return true;
         }
-        public override void compose(RenderTreeBuilder builder)
+        public override bool compose(RenderTreeBuilder builder, View view)
         {
-            base.compose(builder);
+            if (!base.compose(builder, view)) return false;
             switch(orientation)
             {
                 case Common.Orientation.North:
-                    addLine(0, 4, length, 4, "#404040", 8);
-                    addLine(0, 11, length, 11, "#404040", 6,true);
+                    addLine(0, 2, length, 2, "white", 4);
+                    addLine(0, 6, length, 6, "white", 4,true);
                     break;
                 case Common.Orientation.South:
-                    addLine(0, 3, length, 3, "#404040", 6, true);
-                    addLine(0, 10, length, 10, "#404040", 8);                    
+                    addLine(0, 2, length, 2, "white", 4, true);
+                    addLine(0, 6, length, 6, "white", 4);                    
                     break;
                 case Common.Orientation.East:
-                    addLine(3, 0, 3, length, "#404040", 6, true);
-                    addLine(10,0,10,length, "#404040", 8);                    
+                    addLine(3, 0, 3, length, "white", 4, true);
+                    addLine(10,0,10,length, "white", 4);                    
                     break;
                 case Common.Orientation.West:
-                    addLine(4, 0, 4, length, "#404040", 8);
-                    addLine(11, 0, 11, length, "#404040", 6, true);
+                    addLine(4, 0, 4, length, "white", 4);
+                    addLine(11, 0, 11, length, "white", 4, true);
                     break;
             }
+            return true;
         }
     }
     public class PortablePlatform:PortableElement

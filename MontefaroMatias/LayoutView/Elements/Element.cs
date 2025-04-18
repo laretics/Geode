@@ -9,16 +9,14 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace MontefaroMatias.LayoutView.Elements
 {
-    public abstract class Element
+    public abstract class Element:BasicSerializableElement
     {
         public long X { get; set; } //Es la posición a representar de este elemento
         public long Y { get; set; } //Su contenido se representa relativa a la posición total.        
         public string? name { get; set; }
-
-        public static View? currentView { get; set; } //Asigna la vista actual para calcular las coordenadas a representar.
-        public Element()
+        public Element():base()
         {}
-        public virtual bool parse(XmlNode node)
+        public override bool parse(XmlNode node)
         {
             X = parseLong(node, "x");
             Y = parseLong(node, "y");
@@ -48,14 +46,16 @@ namespace MontefaroMatias.LayoutView.Elements
             this.Y = rhs.Y;
             this.name = rhs.nme;
         }
+        protected RenderTreeBuilder mvarBuilder { get; set; }
+        protected View mvarCurrentView { get; set; } //Vista actual en la que se dibuja este elemento.
+
         //Invoca las funciones de dibujo de este elemento.
-        public virtual void compose(RenderTreeBuilder builder)
+        public virtual bool compose(RenderTreeBuilder builder, View view)
         {
             mvarBuilder = builder;
-        }
-
-        protected RenderTreeBuilder mvarBuilder { get; set; }
-
+            mvarCurrentView = view;
+            return (X >= view.X && X <= (view.X + view.Width) && Y >= view.Y && Y <= (view.Y + view.Height));            
+        }      
 
         //Estas funciones llaman a las correspondientes de la estructura que componen los trazos.
         protected void addCircle(int xx, int yy, int r, string fill)
@@ -75,7 +75,7 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.AddAttribute(13, "x2", xScale(xx1));
             mvarBuilder.AddAttribute(14, "y2", yScale(yy1));
             if(dashArray)
-                mvarBuilder.AddAttribute(15, "style", string.Format("stroke:{0};stroke-width:{1};stroke-dasharray:6,7", stroke, width));
+                mvarBuilder.AddAttribute(15, "style", string.Format("stroke:{0};stroke-width:{1};stroke-dasharray:4,5", stroke, width));
             else
                 mvarBuilder.AddAttribute(15, "style", string.Format("stroke:{0};stroke-width:{1}", stroke, width));
 
@@ -91,7 +91,6 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.AddAttribute(25, "fill", fill);
             mvarBuilder.CloseElement();
         }
-
         protected void addSquare(int xx, int yy, int side, string fill)
         {
             int mitad = side / 2;
@@ -130,56 +129,32 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.CloseElement();
         }
 
-        protected void addLabel(bool absolute,int xx, int yy, int w, int h, string? text)
+        protected void addLabel(bool absolute,int xx, int yy, int w, int h,string bootstrapColor, string? text)
         {
             int num = openForeign(absolute,xx, yy, w, h);
             mvarBuilder.OpenElement(num++, "p");
-            mvarBuilder.OpenElement(num++, "small");
+            mvarBuilder.AddAttribute(num++, "class", string.Format("small text-{0}",bootstrapColor));
             mvarBuilder.AddContent(num++,text);
             mvarBuilder.CloseElement();
             mvarBuilder.CloseElement();
+        }
+        protected void addBadge(bool absolute, int xx, int yy, int w, int h, string bootstrapColor, string? text)
+        {
+            int num = openForeign(absolute, xx, yy, w, h);
+            mvarBuilder.OpenElement(num++, "p");
+            mvarBuilder.AddAttribute(num++, "class", "small");
+            mvarBuilder.OpenElement(num++, "span");
+            mvarBuilder.AddAttribute(num++, "class", string.Format("badge bg-{0}", bootstrapColor));
+            mvarBuilder.AddContent(num++, text);
+            mvarBuilder.CloseElement();
+            mvarBuilder.CloseElement();
             mvarBuilder.CloseElement();
         }
-        protected virtual long xScale(int xx){ return X + xx;}
-        protected virtual long yScale(int yy) { return Y + yy;}
+        protected virtual long xScale(int xx){ return X + xx-mvarCurrentView.X;}
+        protected virtual long yScale(int yy) { return Y + yy-mvarCurrentView.Y;}
 
         //Parámetros XML
-        protected string? parseString(XmlNode node,string attributeName)
-        {
-            string? salida = null;
-            salida = node.Attributes?[attributeName]?.Value ?? null;                
-            return salida;            
-        }
-        protected bool parseBoolean(XmlNode node,string attributeName) 
-        {
-            bool salida = false;
-            string? entrada = parseString(node, attributeName);
-            if(null!=entrada)
-            {
-                return 
-                    (
-                    entrada.ToUpper().Contains("T")||
-                    entrada.ToUpper().Contains("1")
-                    );
-            }
-            return salida;
-        }
-        protected int parseInt(XmlNode node,string attributeName)
-        {
-            string? entrada = parseString(node, attributeName);
-            int salida = -1;
-            if (!string.IsNullOrEmpty(entrada))
-                int.TryParse(entrada, out salida);
-            return salida;
-        }
-        protected long parseLong(XmlNode node, string attributeName)
-        {
-            string? entrada = parseString(node, attributeName);
-            long salida = -1;
-            if(!string.IsNullOrEmpty(entrada))
-                long.TryParse(entrada, out salida);
-            return salida;
-        }
+
         protected Common.Orientation parseOrientation(XmlNode node, string attributeName)
         {
             string? entrada = parseString(node, attributeName);

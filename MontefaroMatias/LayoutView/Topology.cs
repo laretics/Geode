@@ -90,27 +90,24 @@ namespace MontefaroMatias.LayoutView
                 {
                     Platform anden = new Platform();
                     anden.portableElement = platform;
-                    //mcolElements.Add(anden);
+                    mcolPlatforms.Add(anden);
                 }
                 foreach (PortableCrossing crossing in topo.crs)
                 {
                     Crossing cruce = new Crossing();
                     cruce.portableElement = crossing;
-                    //mcolElements.Add(cruce);
                     mcolCrossings.Add(cruce.name, cruce);
                 }
                 foreach (PortableSignal signal in topo.sgn)
                 {
                     Signal senal = new Signal();
                     senal.portableElement = signal;
-                    //mcolElements.Add(senal);
                     mcolSignals.Add(senal.name, senal);
                 }
                 foreach (PortableLayoutUnit layoutUnit in topo.lyt)
                 {
                     LayoutUnit via = new LayoutUnit();
                     via.portableElement = layoutUnit;
-                    //mcolElements.Add(via);
                     mcolCircuits.Add(via.name, via);
                 }
             }
@@ -149,6 +146,7 @@ namespace MontefaroMatias.LayoutView
                         case "platform":
                             Platform nuevoAnden = new Platform();
                             if(!nuevoAnden.parse(child)) return false;
+                            mcolPlatforms.Add(nuevoAnden);
                             break;
                         case "crossing":
                             Crossing nuevoPN = new Crossing();
@@ -327,8 +325,6 @@ namespace MontefaroMatias.LayoutView
             }
             return false;
         }
-
-
         private bool areFree(List<string> circuits)
         {
             foreach (string circ in circuits)

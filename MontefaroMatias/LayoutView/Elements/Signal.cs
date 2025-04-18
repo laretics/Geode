@@ -77,9 +77,9 @@ namespace MontefaroMatias.LayoutView.Elements
             advance = parseString(node, "advance");
             return true;
         }
-        public override void compose(RenderTreeBuilder builder)
+        public override bool compose(RenderTreeBuilder builder, View view)
         {
-            base.compose(builder);
+            if (!base.compose(builder, view)) return false;
             openContainerRegion();
             switch (orientation)
             {
@@ -88,33 +88,34 @@ namespace MontefaroMatias.LayoutView.Elements
                     addLine(0, 5, 0, 22, MastilColor, 2); //Mástil
                     addSquare(0, 10, 9, SquareColor); //Rebase autorizado
                     addCircle(0, 0, 5, CircleColor); //Círculo
-                    labelX = -16;labelY = 22;
+                    labelX = -16;labelY = 24;
                     break;
                 case Common.Orientation.South:
                     addLine(- 5, - 5, 5, - 5, MastilColor, 3); //Base
                     addLine(0, - 4, 0, 14, MastilColor, 2); //Mástil
                     addSquare(0, 9, 9, SquareColor); //Rebase autorizado
                     addCircle(0, 19, 5, CircleColor); //Círculo
-                    labelX = -16; labelY = -28;
+                    labelX = -16; labelY = -26;
                     break;
                 case Common.Orientation.East:
                     addLine(- 2, -5,- 2, 5, MastilColor, 3); //Base
                     addLine(- 2, 0, 16, 0, MastilColor, 2); //Mástil
                     addSquare(11, 0, 9, SquareColor); //Rebase autorizado
                     addCircle(21, 0, 5, CircleColor); //Círculo
-                    labelX = -30; labelY = -12;
+                    labelX = -30; labelY = -8;
                     break;
                 case Common.Orientation.West:
                     addLine(23, - 5, 23, 5, MastilColor, 3); //Base
                     addLine( 5, 0, 22, 0, MastilColor, 2); //Mástil
                     addSquare( 10, 0, 9, SquareColor); //Rebase autorizado
                     addCircle(0, 0, 5, CircleColor); //Círculo
-                    labelX = 20; labelY = -12;
+                    labelX = 20; labelY = -8;
                     break;
             }
-            addLabel(false,labelX, labelY,32,32,name);
+            addLabel(false,labelX, labelY,32,32,"light",name);
             inflateContainer(10, 10);
             closeContainerRegion();
+            return true;
         }
 
         public void Roll()
