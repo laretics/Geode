@@ -88,7 +88,7 @@ namespace MontefaroMatias.LayoutView.Elements
                     addLine(0, 5, 0, 22, MastilColor, 2); //Mástil
                     addSquare(0, 10, 9, SquareColor); //Rebase autorizado
                     addCircle(0, 0, 5, CircleColor); //Círculo
-                    labelX = -16;labelY = 24;
+                    labelX = -8;labelY = 24;
                     break;
                 case Common.Orientation.South:
                     addLine(- 5, - 5, 5, - 5, MastilColor, 3); //Base

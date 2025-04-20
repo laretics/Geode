@@ -3,45 +3,42 @@
 <mtfComm title="Parque vaporista de Mallorca" version ="1.1" hversion="1.5">
 	<topology>
 		<!-- Signals-->
-		<signal id="1" name="AI1" x="128" y="90" shunt="false" orientation ="east"/>
-		<signal id="2" name="A1" x="87" y="300" shunt="false" orientation ="north"/>
+		<signal id="1" name="A2" x="40" y="90" shunt="false" orientation ="east"/>
+		<signal id="2" name="A1" x="40" y="200" shunt="false" orientation ="east"/>
 
-		<!--<signal id="3" name="E2" x="120" y="390" shunt="true" orientation ="east" advance="A2" circuit="C03"/>-->
-		<signal id="4" name="E1" x="87" y="225" shunt="true" orientation ="north" advance="A1" circuit="C04"/>
+		<signal id="3" name="E2" x="180" y="90" shunt="true" orientation ="east" advance="A2" circuit="C03"/>
+		<signal id="4" name="E1" x="180" y="200" shunt="true" orientation ="east" advance="A1" circuit="C04"/>
 
-		<signal id="5" name="S1" x="548" y="200" shunt="false" orientation="east" circuit="C06"/>
-		<signal id="6" name="S2" x="548" y="175" shunt="false" orientation="east" circuit="C06"/>
-		<signal id="7" name="S3" x="548" y="150" shunt="false" orientation="east" circuit="C08"/>
-		<signal id="8" name="S4" x="548" y="125" shunt="false" orientation="east" circuit="C08"/>
-		<signal id="9" name="I1" x="548" y="90" shunt="false" orientation="east" circuit="C07" advance="AI1"/>
+		<signal id="5" name="S1" x="608" y="200" shunt="false" orientation="east" circuit="C06"/>
+		<signal id="6" name="S2" x="608" y="175" shunt="false" orientation="east" circuit="C06"/>
+		<signal id="7" name="S3" x="608" y="150" shunt="false" orientation="east" circuit="C08"/>
+		<signal id="8" name="S4" x="608" y="125" shunt="false" orientation="east" circuit="C08"/>
+		<signal id="9" name="I1" x="608" y="90" shunt="false" orientation="east" circuit="C07"/>
 		<!-- Sections-->
 		<section id="1" name="C01" x="10" y="80">
-			<label x="6" y="145"/>
+			<label x="108" y="4"/>
 			<traces>
 				<v id="0">
 					<active>
-						<tr x1="0" y1="244" x2="0" y2="205"/>
-						<tr x1="0" y1="195" x2="0" y2="70"/>
-						<tr x1="0" y1="71" x2="71" y2="0"/>
-						<tr x1="70" y1="0" x2="110" y2="0"/>
+						<tr x1="0" y1="0" x2="80" y2="0"/>
+						<tr x1="90" y1="0" x2="160" y2="0"/>
 					</active>
 				</v>
 			</traces>
 		</section>
-		<section id="2" name="C02" x="37" y="253">
-			<label x="0" y="48"/>
+		<section id="2" name="C02" x="10" y="190">
+			<label x="108" y="-26"/>
 			<traces>
 				<v id="0">
 					<active>
-						<tr x1="38" y1="0" x2="38" y2="22"/>
-						<tr x1="38" y1="32" x2="38" y2="71"/>
+						<tr x1="0" y1="0" x2="80" y2="0"/>
+						<tr x1="90" y1="0" x2="160" y2="0"/>
 					</active>
 				</v>
 			</traces>
 		</section>
-		<crossing x="43" y="280" l="80" id="1" name="PN1" orientation="east"/>
-		
-		<!--<section id="3" name="C03" x="115" y="80">
+		<crossing x="95" y="135" l="150" id="1" name="PN1" orientation="north"/>
+		<section id="3" name="C03" x="175" y="80">
 			<label x="90" y="4"/>
 			<frogs>
 				<frog x="40" y="-3" w="7" h="7" />
@@ -91,157 +88,37 @@
 					</active>
 				</v>
 			</traces>
-		</section>-->
-		
-		<section id="4" name="C04" x="75" y="115">
-			<label x="150" y="37"/>
+		</section>
+		<section id="4" name="C04" x="175" y="190">
+			<label x="90" y="-26"/>
 			<frogs>
-				<frog x="85" y="72" w="7" h="7"/>
-				<frog x="170" y="22" w="7" h="7"/>
-				<frog x="170" y="72" w="7" h="7"/>				
+				<frog x="130" y="-3" w="7" h="7"/>				
 			</frogs>
 			<traces>
 				<v id="0">
 					<inactive>
-						<!--Rama inferior -->
-						
-						<!--Frog V1,3,4 a frog V3,4 -->
-						<tr x1="110" y1="65" x2="150" y2="25"/>
-						<tr x1="149" y1="25" x2="168" y2="25"/>
-						
-						<!--Frog V1,2 a Via 2-->
-						<tr x1="195" y1="65" x2="210" y2="50"/>
-						<tr x1="209" y1="50" x2="260" y2="50"/>
-						
-						<!--Frog 3,4 a Vía 3 -->
-						<tr x1="179" y1="25" x2="260" y2="25"/>
-						
-						<!--Frog 3,4 a Vía 4-->
-						<tr x1="195" y1="15" x2="210" y2="0"/>
-						<tr x1="209" y1="0" x2="260" y2="0"/>
-						
+						<tr x1="155" y1="-10" x2="170" y2="-25"/>
+						<tr x1="169" y1="-25" x2="220" y2="-25"/>
 					</inactive>
 					<active>
-						<!--Entrada hasta primer frog-->
-						<tr x1="0" y1="95" x2="0" y2="134"/>
-						<tr x1="-1" y1="96" x2="21" y2="74"/>
-						<tr x1="20" y1="75" x2="83" y2="75"/>
-						
-						<!--Primer frog a frog V1,2 -->
-						<tr x1="94" y1="75" x2="168" y2="75"/>
-						
-						<!--Frog V1,2 a Vía 1 -->
-						<tr x1="179" y1="75" x2="260" y2="75"/>
+						<tr x1="0" y1="0" x2="128" y2="0"/>
+						<tr x1="139" y1="0" x2="220" y2="0"/>
 					</active>
 				</v>
 				<v id="1">
 					<inactive>
-						<!--Rama inferior -->
-						
-						<!--Frog V1,3,4 a frog V3,4 -->
-						<tr x1="110" y1="65" x2="150" y2="25"/>
-						<tr x1="149" y1="25" x2="168" y2="25"/>
-												
-						<!--Frog V1,2 a Vía 1 -->
-						<tr x1="199" y1="75" x2="260" y2="75"/>						
-						
-						<!--Frog 3,4 a Vía 3 -->
-						<tr x1="179" y1="25" x2="260" y2="25"/>
-						
-						<!--Frog 3,4 a Vía 4-->
-						<tr x1="195" y1="15" x2="210" y2="0"/>
-						<tr x1="209" y1="0" x2="260" y2="0"/>
-						
+						<tr x1="159" y1="0" x2="220" y2="0"/>
 					</inactive>
 					<active>
-						<!--Entrada hasta primer frog-->
-						<tr x1="0" y1="95" x2="0" y2="134"/>
-						<tr x1="-1" y1="96" x2="21" y2="74"/>
-						<tr x1="20" y1="75" x2="83" y2="75"/>
-						
-						<!--Primer frog a frog V1,2 -->
-						<tr x1="94" y1="75" x2="168" y2="75"/>
-
-						<!--Frog V1,2 a Via 2-->
-						<tr x1="179" y1="75" x2="186" y2="75"/>
-						<tr x1="185" y1="75" x2="210" y2="50"/>
-						<tr x1="209" y1="50" x2="260" y2="50"/>
-
-					</active>
-				</v>
-				<v id="2">
-					<inactive>
-						<!--Rama inferior -->
-						
-						<!--Primer frog a frog V1,2 -->
-						<tr x1="114" y1="75" x2="168" y2="75"/>
-
-						<!--Frog V1,2 a Vía 1 -->
-						<tr x1="179" y1="75" x2="260" y2="75"/>
-						
-						<!--Frog V1,2 a Via 2-->
-						<tr x1="195" y1="65" x2="210" y2="50"/>
-						<tr x1="209" y1="50" x2="260" y2="50"/>
-																		
-						<!--Frog 3,4 a Vía 4-->
-						<tr x1="195" y1="15" x2="210" y2="0"/>
-						<tr x1="209" y1="0" x2="260" y2="0"/>
-						
-					</inactive>
-					<active>
-						<!--Entrada hasta primer frog-->
-						<tr x1="0" y1="95" x2="0" y2="134"/>
-						<tr x1="-1" y1="96" x2="21" y2="74"/>
-						<tr x1="20" y1="75" x2="83" y2="75"/>
-						
-						<!--Frog V1,3,4 a frog V3,4 -->
-						<tr x1="94" y1="75" x2="101" y2="75"/>
-						<tr x1="100" y1="75" x2="150" y2="25"/>
-						<tr x1="149" y1="25" x2="168" y2="25"/>
-						
-						<!--Frog 3,4 a Vía 3 -->
-						<tr x1="179" y1="25" x2="260" y2="25"/>
-
-					</active>
-				</v>
-				<v id="3">
-					<inactive>
-						<!--Rama inferior -->
-						
-						<!--Primer frog a frog V1,2 -->
-						<tr x1="114" y1="75" x2="168" y2="75"/>
-
-						<!--Frog V1,2 a Vía 1 -->
-						<tr x1="179" y1="75" x2="260" y2="75"/>
-						
-						<!--Frog V1,2 a Via 2-->
-						<tr x1="195" y1="65" x2="210" y2="50"/>
-						<tr x1="209" y1="50" x2="260" y2="50"/>
-						
-						<!--Frog 3,4 a Vía 3 -->
-						<tr x1="199" y1="25" x2="260" y2="25"/>																								
-						
-					</inactive>
-					<active>
-						<!--Entrada hasta primer frog-->
-						<tr x1="0" y1="95" x2="0" y2="134"/>
-						<tr x1="-1" y1="96" x2="21" y2="74"/>
-						<tr x1="20" y1="75" x2="83" y2="75"/>
-						
-						<!--Frog V1,3,4 a frog V3,4 -->
-						<tr x1="94" y1="75" x2="101" y2="75"/>
-						<tr x1="100" y1="75" x2="150" y2="25"/>
-						<tr x1="149" y1="25" x2="168" y2="25"/>
-						
-						<!--Frog 3,4 a Vía 4-->
-						<tr x1="179" y1="25" x2="186" y2="25"/>
-						<tr x1="185" y1="25" x2="210" y2="0"/>
-						<tr x1="209" y1="0" x2="260" y2="0"/>
+						<tr x1="0" y1="0" x2="128" y2="0"/>
+						<tr x1="139" y1="0" x2="146" y2="0"/>
+						<tr x1="145" y1="0" x2="170" y2="-25"/>
+						<tr x1="169" y1="-25" x2="220" y2="-25"/>
 					</active>
 				</v>
 			</traces>
 		</section>
-		<section id="5" name="M4" x="340" y="115">
+		<section id="5" name="M4" x="400" y="115">
 			<traces>
 				<v id="0" >
 					<active>
@@ -250,8 +127,8 @@
 				</v>
 			</traces>
 		</section>
-		<platform x="340" y="120" l="175" orientation="north"/>
-		<section id="6" name="M3" x="340" y="140">
+		<platform x="400" y="120" l="175" orientation="north"/>
+		<section id="6" name="M3" x="400" y="140">
 			<traces>
 				<v id="0" >
 					<active>
@@ -260,8 +137,8 @@
 				</v>
 			</traces>
 		</section>
-		<platform x="340" y="145" l="175" orientation="north"/>
-		<section id="7" name="M2" x="340" y="165">
+		<platform x="400" y="145" l="175" orientation="north"/>
+		<section id="7" name="M2" x="400" y="165">
 			<traces>
 				<v id="0" >
 					<active>
@@ -270,8 +147,8 @@
 				</v>
 			</traces>
 		</section>
-		<platform x="340" y="170" l="175" orientation="north"/>
-		<section id="8" name="M1" x="340" y="190">
+		<platform x="400" y="170" l="175" orientation="north"/>
+		<section id="8" name="M1" x="400" y="190">
 			<traces>
 				<v id="0" >
 					<active>
@@ -280,18 +157,18 @@
 				</v>
 			</traces>
 		</section>
-		<platform x="340" y="195" l="175" orientation="north"/>
-		<section id="9" name="C05" x="125" y="80">
+		<platform x="400" y="195" l="175" orientation="north"/>
+		<section id="9" name="C05" x="400" y="80">
 			<label x="82" y="4"/>
 			<traces>
 				<v id="0" >
 					<active>
-						<tr x1="0" y1="0" x2="415" y2="0"/>
+						<tr x1="0" y1="0" x2="200" y2="0"/>
 					</active>
 				</v>
 			</traces>
 		</section>
-		<section id="10" name="C08" x="545" y="115">
+		<section id="10" name="C08" x="605" y="115">
 			<label x="128" y="4"/>
 			<frogs>
 				<frog x="100" y="-3" w="7" h="7"/>
@@ -320,7 +197,7 @@
 				</v>
 			</traces>
 		</section>
-		<section id="11" name="C07" x="545" y="80">
+		<section id="11" name="C07" x="605" y="80">
 			<label x="128" y="4"/>
 			<traces>
 				<v id="0" >
@@ -330,7 +207,7 @@
 				</v>
 			</traces>
 		</section>
-		<section id="12" name="C06" x="545" y="190">
+		<section id="12" name="C06" x="605" y="190">
 			<label x="128" y="-26"/>
 			<frogs>
 				<frog x="100" y="-3" w="7" h="7"/>
@@ -362,9 +239,9 @@
 	</topology>	
 	<views>
 		<view id="0" name="Esquema principal" comment="Vista principal del enclavamiento a nivel de CTC" 
-			  x="-100" y="0" w="1400" h="800" scale="1" icon="0"/>
+			  x="0" y="0" w="1000" h="800" scale="1" icon="0"/>
 		<view id="1" name="Marratxinet" comment="Estación de Marratxinet desde las avanzadas en los túneles hasta los circuitos de salida"
-			  x="-20" y="0" w="725" h="350" scale="1" icon="1"/>
+			  x="0" y="0" w="825" h="250" scale="1" icon="1"/>
 		<view id="2" name="Contenedor" comment="Estación secundaria junto a la Landaluce"
 			  x="0" y="0" w="1000" h="1000" scale ="1" icon="1"/>	
 	</views>
@@ -442,16 +319,16 @@
 			</chg>
 			<post setlock="C04,M2,C06"/>
 		</itin>
-		<itin id="C01M3" name="Entrada vía 3" group="Entradas" origin="E1" destination="M3" key="E1,M3">
-			<pre ckfree="C04,M3"/>
+		<itin id="C01M3" name="Entrada vía 3" group="Entradas" origin="E2" destination="M3" key="E2,M3">
+			<pre ckfree="C03,M3"/>
 			<chg>
-				<pos cir="C04" set="2"/>
-				<signal id="A1" set="warning"/>
-				<signal id="E1" set="stopAdvice"/>
+				<pos cir="C03" set="1"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="stopAdvice"/>
 				<signal id="S3" set="stop"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C04,M3"/>
+			<post setlock="C03,M3"/>
 		</itin>
 		<itin id="M3C08" name="Salida vía 3" group="Salidas" origin="M3" destination="S3" key="S3,C08">
 			<pre ckfree="C08"/>
@@ -461,28 +338,28 @@
 			</chg>
 			<post setlock="C08"/>
 		</itin>
-		<itin id="C01M3C08" name="Paso directo vía 3" group="Pasos" origin="E1" destination="S3" key="E1,S3,C08">
-			<pre ckfree="C04,M3,C08"/>
+		<itin id="C01M3C08" name="Paso directo vía 3" group="Pasos" origin="E2" destination="S3" key="E2,S3,C08">
+			<pre ckfree="C03,M3,C08"/>
 			<chg>
-				<pos cir="C04" set="2"/>
+				<pos cir="C03" set="1"/>
 				<pos cir="C08" set="1"/>
-				<signal id="A1" set="warning"/>
-				<signal id="E1" set="warning"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="warning"/>
 				<signal id="S3" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C04,M3,C08"/>
+			<post setlock="C03,M3,C08"/>
 		</itin>
-		<itin id="C01M4" name="Entrada vía 4" group="Entradas" origin="E1" destination="M4" key="E1,M4">
-			<pre ckfree="C04,M4"/>
+		<itin id="C01M4" name="Entrada vía 4" group="Entradas" origin="E2" destination="M4" key="E2,M4">
+			<pre ckfree="C03,M4"/>
 			<chg>
-				<pos cir="C04" set="3"/>
-				<signal id="A1" set="warning"/>
-				<signal id="E1" set="stopAdvice"/>
+				<pos cir="C03" set="2"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="stopAdvice"/>
 				<signal id="S4" set="stop"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C04,M4"/>
+			<post setlock="C03,M4"/>
 		</itin>
 		<itin id="M4C08" name="Salida vía 4" group="Salidas" origin="M4" destination="S4" key="S4,C08">
 			<pre ckfree="C08"/>
@@ -492,27 +369,39 @@
 			</chg>
 			<post setlock="C08"/>
 		</itin>		
-		<itin id="C01M4C08" name="Paso directo vía 4" group="Pasos" origin="E1" destination="S4" key="E1,S4,C08">
-			<pre ckfree="C04,M4,C08"/>
+		<itin id="C01M4C08" name="Paso directo vía 4" group="Pasos" origin="E2" destination="S4" key="E2,S4,C08">
+			<pre ckfree="C03,M4,C08"/>
 			<chg>
-				<pos cir="C04" set="3"/>
+				<pos cir="C03" set="2"/>
 				<pos cir="C08" set="0"/>
-				<signal id="A1" set="warning"/>
-				<signal id="E1" set="free"/>
+				<signal id="A2" set="warning"/>
+				<signal id="E2" set="free"/>
 				<signal id="S4" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C04,M4,C08"/>
+			<post setlock="C03,M4,C08"/>
 		</itin>
-		<itin id="C01C05C07" name="Paso directo vía 5" group="Pasos" origin="AI1" destination="I1" key="AI1,I1">
-			<pre ckfree="C05,C07"/>
+		<itin id="C01C05C07" name="Paso directo vía 5" group="Pasos" origin="E2" destination="I1" key="E2,I1">
+			<pre ckfree="C03,C05,C07"/>
 			<chg>
 				<pos cir="C03" set="0"/>
-				<signal id="AI1" set="free"/>
+				<signal id="A2" set="free"/>
+				<signal id="E2" set="free"/>
 				<signal id="I1" set="free"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
-			<post setlock="C05,C07"/>
+			<post setlock="C03,C05,C07"/>
+		</itin>
+		<itin id="C01C05" name="Entrada vía 5" group="Entradas" origin="E2" destination="C05" key="E2,C05">
+			<pre ckfree="C03,C05"/>
+			<chg>
+				<pos cir="C03" set="0"/>
+				<signal id="A2" set="free"/>
+				<signal id="E2" set="stopAdvice"/>
+				<signal id="I1" set="stop"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C03,C05"/>
 		</itin>
 		<itin id="C05C07" name="Salida vía 5" group="Salidas" origin="C05" destination="I1" key="I1,C07">
 			<pre ckfree="C07"/>
