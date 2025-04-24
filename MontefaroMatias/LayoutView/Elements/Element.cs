@@ -11,6 +11,7 @@ namespace MontefaroMatias.LayoutView.Elements
 {
     public abstract class Element:BasicSerializableElement
     {
+        public static int scaleValue { get; set; } = 1;
         public long X { get; set; } //Es la posición a representar de este elemento
         public long Y { get; set; } //Su contenido se representa relativa a la posición total.        
         public string? name { get; set; }
@@ -54,7 +55,9 @@ namespace MontefaroMatias.LayoutView.Elements
         {
             mvarBuilder = builder;
             mvarCurrentView = view;
-            return (X >= view.X && X <= (view.X + view.Width) && Y >= view.Y && Y <= (view.Y + view.Height));            
+            long xx = X / scaleValue;
+            long yy = Y / scaleValue;   
+            return (xx >= view.X && xx <= (view.X + view.Width) && yy >= view.Y && yy <= (view.Y + view.Height));            
         }      
 
         //Estas funciones llaman a las correspondientes de la estructura que componen los trazos.
@@ -63,7 +66,7 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.OpenElement(0, "circle");
             mvarBuilder.AddAttribute(1, "cx", xScale(xx));
             mvarBuilder.AddAttribute(2, "cy", yScale(yy));
-            mvarBuilder.AddAttribute(3, "r", r);
+            mvarBuilder.AddAttribute(3, "r", r/scaleValue);
             mvarBuilder.AddAttribute(4, "fill", fill);
             mvarBuilder.CloseElement();
         }
@@ -75,9 +78,9 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.AddAttribute(13, "x2", xScale(xx1));
             mvarBuilder.AddAttribute(14, "y2", yScale(yy1));
             if(dashArray)
-                mvarBuilder.AddAttribute(15, "style", string.Format("stroke:{0};stroke-width:{1};stroke-dasharray:4,5", stroke, width));
+                mvarBuilder.AddAttribute(15, "style", string.Format("stroke:{0};stroke-width:{1};stroke-dasharray:4,5", stroke, width/scaleValue));
             else
-                mvarBuilder.AddAttribute(15, "style", string.Format("stroke:{0};stroke-width:{1}", stroke, width));
+                mvarBuilder.AddAttribute(15, "style", string.Format("stroke:{0};stroke-width:{1}", stroke, width/scaleValue));
 
             mvarBuilder.CloseElement();
         }
@@ -86,8 +89,8 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.OpenElement(20, "rect");
             mvarBuilder.AddAttribute(21, "x", xScale(xx0));
             mvarBuilder.AddAttribute(22, "y", yScale(yy0));
-            mvarBuilder.AddAttribute(23, "width", xx1 - xx0);
-            mvarBuilder.AddAttribute(24, "height",yy1 - yy0);
+            mvarBuilder.AddAttribute(23, "width", (xx1 - xx0)/scaleValue);
+            mvarBuilder.AddAttribute(24, "height",(yy1 - yy0)/scaleValue);
             mvarBuilder.AddAttribute(25, "fill", fill);
             mvarBuilder.CloseElement();
         }
@@ -131,27 +134,33 @@ namespace MontefaroMatias.LayoutView.Elements
 
         protected void addLabel(bool absolute,int xx, int yy, int w, int h,string bootstrapColor, string? text)
         {
-            int num = openForeign(absolute,xx, yy, w, h);
-            mvarBuilder.OpenElement(num++, "p");
-            mvarBuilder.AddAttribute(num++, "class", string.Format("small text-{0}",bootstrapColor));
-            mvarBuilder.AddContent(num++,text);
-            mvarBuilder.CloseElement();
-            mvarBuilder.CloseElement();
+            if(1==scaleValue)
+            {
+                int num = openForeign(absolute, xx, yy, w, h);
+                mvarBuilder.OpenElement(num++, "p");
+                mvarBuilder.AddAttribute(num++, "class", string.Format("small text-{0}", bootstrapColor));
+                mvarBuilder.AddContent(num++, text);
+                mvarBuilder.CloseElement();
+                mvarBuilder.CloseElement();
+            }
         }
         protected void addBadge(bool absolute, int xx, int yy, int w, int h, string bootstrapColor, string? text)
         {
-            int num = openForeign(absolute, xx, yy, w, h);
-            mvarBuilder.OpenElement(num++, "p");
-            mvarBuilder.AddAttribute(num++, "class", "small");
-            mvarBuilder.OpenElement(num++, "span");
-            mvarBuilder.AddAttribute(num++, "class", string.Format("badge bg-{0}", bootstrapColor));
-            mvarBuilder.AddContent(num++, text);
-            mvarBuilder.CloseElement();
-            mvarBuilder.CloseElement();
-            mvarBuilder.CloseElement();
+            if(1==scaleValue)
+            {
+                int num = openForeign(absolute, xx, yy, w, h);
+                mvarBuilder.OpenElement(num++, "p");
+                mvarBuilder.AddAttribute(num++, "class", "small");
+                mvarBuilder.OpenElement(num++, "span");
+                mvarBuilder.AddAttribute(num++, "class", string.Format("badge bg-{0}", bootstrapColor));
+                mvarBuilder.AddContent(num++, text);
+                mvarBuilder.CloseElement();
+                mvarBuilder.CloseElement();
+                mvarBuilder.CloseElement();
+            }
         }
-        protected virtual long xScale(int xx){ return X + xx-mvarCurrentView.X;}
-        protected virtual long yScale(int yy) { return Y + yy-mvarCurrentView.Y;}
+        protected virtual long xScale(int xx){ return (X + xx-mvarCurrentView.X)/scaleValue;}
+        protected virtual long yScale(int yy) { return (Y + yy-mvarCurrentView.Y)/scaleValue;}
 
         //Parámetros XML
 

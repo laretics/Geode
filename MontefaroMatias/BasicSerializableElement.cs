@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace MontefaroMatias.LayoutView
+namespace MontefaroMatias
 {
     public abstract class BasicSerializableElement
     {
@@ -23,10 +23,10 @@ namespace MontefaroMatias.LayoutView
             if (null != entrada)
             {
                 return
-                    (
+                    
                     entrada.ToUpper().Contains("T") ||
                     entrada.ToUpper().Contains("1")
-                    );
+                    ;
             }
             return salida;
         }

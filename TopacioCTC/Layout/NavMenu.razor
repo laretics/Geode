@@ -1,5 +1,6 @@
-﻿@inject TopacioClient mvarClient;
-@inject StorageService mvarStorage;
+﻿@inject TopacioClient mvarClient
+@inject StorageService mvarStorage
+@using MontefaroMatias.Users
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <img src="img/logoShow.gif" width="90%" style="max-width:128px">
@@ -16,13 +17,16 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Inicio
             </NavLink>
         </div>
-        @foreach(View vista in mvarStorage.mcolViews)
+        @if(null!=CurrentUser && CurrentUser.Level>0)
         {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="@getHref(vista)">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> @vista.Name
-                </NavLink>
-            </div>
+            @foreach (View vista in mvarStorage.mcolViews)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@getHref(vista)">
+                        <span class="bi bi-layout-nav-menu" aria-hidden="true"></span> @vista.Name
+                    </NavLink>
+                </div>
+            }
         }
     </nav>
 </div>
@@ -30,6 +34,8 @@
 @code {
     private bool collapseNavMenu = true;
     private string getHref(View rhs) => string.Format("layout/{0}", rhs.Id);
+    [CascadingParameter]
+    public User? CurrentUser { get; set; } = null!;
     protected async override Task OnInitializedAsync()
     {
         Views? views = await mvarClient.getViews();        

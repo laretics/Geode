@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using MontefaroMatias.Users
 <div class="page">
+    <CascadingValue Value="CurrentUser">    
     <div class="sidebar">
         <NavMenu />
     </div>
@@ -11,7 +13,15 @@
         </div>
 
         <article class="content px-4">
-                @Body
+            @Body
         </article>
     </main>
+    </CascadingValue>
 </div>
+@code{
+    private User? CurrentUser{ get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        CurrentUser = await TopacioAuthService.GetCurrentUser();
+    }
+}

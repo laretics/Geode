@@ -1,4 +1,5 @@
 ﻿using MontefaroMatias.LayoutView;
+using MontefaroMatias.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +23,13 @@ namespace MontefaroMatias.Clients
         public string hversion { get; private set; } //Versión del hardware (para incompatibilidades)
         public Topology Topology { get=> mvarTopology;}
         public Views Views { get => mcolViews; }
+        public List<User> Users { get; private set; }
         public LayoutSystem()
         {
             mcolClients = new List<Client>();
             mvarTopology = new Topology();
             mcolViews = new Views();
+            Users = new List<User>();
             fileName = string.Empty;
             name = string.Empty;
             version = "1.0";
@@ -48,6 +51,11 @@ namespace MontefaroMatias.Clients
                         if (!parseClients(hijo)) 
                             return false;
                     }
+                    if(hijo.Name.Equals("users"))
+                    {
+                        if(!parseUsers(hijo))
+                            return false;
+                    }
                     else if(hijo.Name.Equals("topology"))
                     {
                         if( !mvarTopology.parse(hijo))
@@ -67,6 +75,36 @@ namespace MontefaroMatias.Clients
             }               
             return true;
         }
+        protected bool parseUsers(XmlNode node)
+        {
+            foreach (XmlNode child in node.ChildNodes)
+            {
+                User usuario = new User();
+                if (!usuario.parse(child)) return false;
+                Users.Add(usuario);
+            }
+            return true;
+        }
+        public User? LoginRequest(User? user)
+        {
+            if (user == null) return null;
+            foreach (User candidato in  Users)
+            {
+                if(candidato.Name.Equals(user.Name))
+                {
+                    if(candidato.Pwd.Equals(user.Pwd))
+                    {
+                        User salida = new User();
+                        salida.Id = candidato.Id;
+                        salida.Name = candidato.Name;
+                        salida.Level = candidato.Level;
+                        return salida;
+                    }
+                }
+            }
+            return null;
+        }
+
         protected bool parseClients(XmlNode node)
         {
             foreach (XmlNode child in node.ChildNodes)

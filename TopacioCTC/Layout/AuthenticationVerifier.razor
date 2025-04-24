@@ -14,10 +14,6 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        inSession = await TopacioAuthService.isSessionOpen();
-    }
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        inSession = await TopacioAuthService.isSessionOpen();
+        inSession = null != await TopacioAuthService.GetCurrentUser();
     }
 }

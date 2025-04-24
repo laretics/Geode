@@ -1,6 +1,7 @@
 ﻿@page "/layout/{Id:int}"
 @using MontefaroMatias.LayoutView.Elements
 @using MontefaroMatias.Locking
+@using MontefaroMatias.Users
 @inject TopacioClient mvarTopacioClient
 @inject StorageService mvarStorageService
 <div class="d-flex justify-content-center align-items-center bg-black">
@@ -12,21 +13,35 @@
             <h3>@showSelElements()</h3>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="btn-group btn-group-lg">
-                <button type="button" class="btn btn-primary" onclick="@clearElements">Clear</button>
-                <button type="button" class="btn btn-primary" onclick="@InitOrder">Init</button>
-                <button type="button" class="btn btn-warning" onclick="@OnDai">DAI</button>
-                <button type="button" class="btn btn-primary" onclick="@OnOccupancy">Occ</button>
+    @if(currentUserLevel>1)
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-secondary" onclick="@clearElements">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="@InitOrder">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="m480-320 160-160-160-160-56 56 64 64H320v80h168l-64 64 56 56Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" /></svg>
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="@OnDai">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" /></svg>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="@OnOccupancy">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M160-340v-380q0-53 27.5-84.5t72.5-48q45-16.5 102.5-22T480-880q66 0 124.5 5.5t102 22q43.5 16.5 68.5 48t25 84.5v380q0 59-40.5 99.5T660-200l60 60v20h-80l-80-80H400l-80 80h-80v-20l60-60q-59 0-99.5-40.5T160-340Zm320-460q-106 0-155 12.5T258-760h448q-15-17-64.5-28.5T480-800ZM240-560h200v-120H240v120Zm420 80H240h480-60Zm-140-80h200v-120H520v120ZM340-320q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm280 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm-320 40h360q26 0 43-17t17-43v-140H240v140q0 26 17 43t43 17Zm180-480h226-448 222Z" /></svg>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 @code
 {
     [Parameter]
     public int Id { get; set; }
+    [CascadingParameter]
+    public User? CurrentUser { get; set; }
+    private int currentUserLevel { get => (null == CurrentUser) ? 0 : CurrentUser.Level; }
     private MontefaroMatias.LayoutView.Topology mvartt = new Topology();
     private View? view { get; set; } = new View();
     private List<Element> mcolDrawables { get; set; } = new List<Element>();
@@ -46,15 +61,16 @@
         portableOrders? auxOrders = await mvarTopacioClient.getOrders();        
         if (null != auxOrders)
             mcolOrders = auxOrders;
-        mcolDynamics = mvartt.DynamicElements;
 
-        mcolDrawables = mvartt.Elements;
         DynamicElement.AddElementCallback = clickElement;
         mvarStorageService.OnUpdateReceived += OnUpdateReceived;
     }
     protected override async Task OnParametersSetAsync()
     {
         this.view = mvarStorageService.mcolViews.view(Id);
+        Element.scaleValue = view.Scale;
+        mcolDynamics = mvartt.DynamicElements;
+        mcolDrawables = mvartt.Elements;
     }
     protected async Task GetTopoAsync()
     {

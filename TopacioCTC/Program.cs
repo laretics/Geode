@@ -14,18 +14,13 @@ builder.Services.AddSingleton<StorageService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(mvarServerUri) });
 builder.Services.AddScoped<TopacioClient>(); //Cliente para obtener topología y estado del enclavamiento
 builder.Services.AddSingleton<StorageService>();
-builder.Services.AddScoped<TopacioAuthService>(
-sp =>
-{
-    var jsRuntime = sp.GetRequiredService<IJSRuntime>();
-    return new TopacioAuthService(jsRuntime);
+builder.Services.AddScoped<TopacioAuthService>(sp =>
+{    
+    return new TopacioAuthService(sp);
 });
 
 var host = builder.Build();
-
-// Inicializa el servicio aquí si es necesario
 var authService = host.Services.GetRequiredService<TopacioAuthService>();
-// Realiza cualquier inicialización adicional aquí
-
+authService.setJSRuntime(host.Services.GetRequiredService<IJSRuntime>());
 await host.RunAsync();
 

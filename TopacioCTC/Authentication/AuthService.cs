@@ -1,60 +1,54 @@
 ﻿using Microsoft.JSInterop;
+using MontefaroMatias;
+using MontefaroMatias.Users;
+using System.Text.Json;
+using System.Threading.Tasks;
+using TopacioCTC.Components;
 
 namespace TopacioCTC.Authentication
 {
     public class TopacioAuthService
     {
         protected static IJSRuntime mvarJSRuntime;
-        public TopacioAuthService(IJSRuntime runtime)
+        protected IServiceProvider mvarProvider;
+
+        public TopacioAuthService(IServiceProvider serviceProvider)
+        {
+            mvarProvider = serviceProvider;
+        }
+
+        public void setJSRuntime(IJSRuntime runtime)
         {
             mvarJSRuntime = runtime;
         }
-        private readonly Dictionary<string, string> mcolUsers = new Dictionary<string, string>
-        {
-            {"root" ,"qwer" },  //Administrador
-            { "ctc", "matias699" }, //Permiso de operación
-            { "guest", "guest" } //Sin permisos... sólo puede ver
-        };
 
-        public bool Authenticate(string username, string password)
+        public async Task<bool> Authenticate(string username, string password)
         {
-            return mcolUsers.TryGetValue(username, out var storedPassword) && storedPassword == password;
+            User container = new User();
+            container.Name = username;
+            container.Pwd = password;
+            TopacioClient topacioClient = mvarProvider.GetRequiredService<TopacioClient>();
+            User? auxUser = await topacioClient.tryLogin(container);
+            await SetCurrentUser(auxUser);
+            return auxUser != null;
         }
 
-        public static async Task<bool> isSessionOpen()
+        public static async Task<User?> GetCurrentUser()
         {
-            return await GetToken() > DateTime.Now;
-            //La sesión se considera abierta mientras el valor de "token" sea superior a la fecha y hora actuales.
-        }
-
-        private static async Task<DateTime> GetToken()
-        {
-            DateTime salida = DateTime.MinValue;
-            string? valor = await GetDataFromSession("token");
-            if(null!=valor)
-            {
-                DateTime.TryParse(valor, out salida);
-            }
+            string? cadena = await GetDataFromSession("currentsession");
+            if(null==cadena) return null;
+            User? salida = JsonSerializer.Deserialize(cadena, SharedSerializeContext.Default.User);
             return salida;
         }
-        public static async Task<string?> GetUserName()
+        public async static Task SetCurrentUser(User? rhs)
         {
-            return await GetDataFromSession("userName");
+            string cadena = JsonSerializer.Serialize(rhs,SharedSerializeContext.Default.User);
+            await SetDataToSession("currentsession", cadena);
         }
-        public static async Task<bool> SetUserName(string username)
-        {
-            return await SetDataToSession("userName", username);
-        }
-        public static async Task<bool> SetToken()
-        {
-            DateTime horaFin = DateTime.Now.AddHours(4);
-            string auxTexto = horaFin.ToString();
-            return await SetDataToSession("token", auxTexto);
-        }
+
         public static async Task<bool> Logout()
         {
-            await mvarJSRuntime.InvokeVoidAsync("localStorage.removeItem", "token");
-            await mvarJSRuntime.InvokeVoidAsync("localStorage.removeItem", "userName");
+            await SetCurrentUser(null);
             return true;
         }
         private static async Task<string?> GetDataFromSession(string key)

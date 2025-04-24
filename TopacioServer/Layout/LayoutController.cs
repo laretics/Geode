@@ -3,17 +3,13 @@ using System.Text.Json.Serialization;
 using MontefaroMatias.Clients;
 using MontefaroMatias.LayoutView;
 using MontefaroMatias.Locking;
+using MontefaroMatias;
 using MontefaroMatias.XML;
 using TopacioServer.Components;
+using MontefaroMatias.Users;
 
 namespace TopacioServer.Layout
 {
-    [JsonSerializable(typeof(Topology))]
-    internal partial class TopologySerializerContext : JsonSerializerContext { }
-    [JsonSerializable(typeof(portableOrders))]
-    internal partial class OrdersSerializerContext : JsonSerializerContext { }
-    [JsonSerializable(typeof(Views))]
-    internal partial class ViewsSerializerContext : JsonSerializerContext { }
 
     public class LayoutController
     {
@@ -26,6 +22,7 @@ namespace TopacioServer.Layout
             salida.MapGet("/ordr", () => getOrders());
             salida.MapGet("/views", () => getViews());
             salida.MapGet("/upd", () => getLastUpdate());
+            salida.MapPut("/user", (HttpRequest request) => processUser(request));
             salida.MapPost("/cmd", (HttpRequest request) => processOrder(request));
             salida.MapPost("/occ", (HttpRequest request) => processOccupancy(request));
         }
@@ -44,7 +41,7 @@ namespace TopacioServer.Layout
         {
             Views vistas = mvarKernel.mainSystem.Views;
 
-            string cadenaJson = JsonSerializer.Serialize(vistas, ViewsSerializerContext.Default.Views);
+            string cadenaJson = JsonSerializer.Serialize(vistas,SharedSerializeContext.Default.Views);
             return cadenaJson;
         }
         //Obtiene el momento de la última actualización, para saber si el navegador
@@ -65,5 +62,25 @@ namespace TopacioServer.Layout
             string orderId = await reader.ReadToEndAsync();
             mvarKernel.mainSystem.Topology.ExecuteOccupancy(orderId);   
         }
+        private async Task<string> processUser(HttpRequest request)
+        {
+            using var reader = new StreamReader(request.Body);
+            string? userString = await reader.ReadToEndAsync();
+            
+            if (string.IsNullOrEmpty(userString)) return null;
+            try
+            {
+                User? auxUser = JsonSerializer.Deserialize(userString, SharedSerializeContext.Default.User);
+                User? auxRespuesta = mvarKernel.mainSystem.LoginRequest(auxUser);
+                string salida = JsonSerializer.Serialize(auxRespuesta, SharedSerializeContext.Default.User);
+                return salida;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deserializando el objeto User: {ex.Message}");
+                return null;
+            }
+        }
+
     }
 }

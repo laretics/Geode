@@ -1,9 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!-- 06-04-2025 -->
 <mtfComm title="Parque vaporista de Mallorca" version ="1.1" hversion="1.5">
+	<users>
+		<user id="0" name="root" pwd="qwer" level="255"/>
+		<user id="1" name="xisco" pwd="xisco" level="1"/>
+		<user id="2" name="roberto" pwd="roberto" level="1"/>
+		<user id="3" name="matias" pwd="corea69" level="2"/>
+		<user id="4" name="domingo" pwd="domingo69" level="2"/>
+		<user id="5" name="guest" pwd="guest" level="1"/>
+	</users>
+	<views>
+		<view id="0" name="CTC" comment="Vista principal del enclavamiento a nivel de CTC"
+			  x="-100" y="0" w="600" h="250" scale="2" icon="0"/>
+		<view id="1" name="Marratxinet" comment="Estación de Marratxinet desde las avanzadas en los túneles hasta los circuitos de salida"
+			  x="-20" y="0" w="725" h="350" scale="1" icon="1"/>
+		<view id="2" name="Contenedor" comment="Estación secundaria junto a la Landaluce"
+			  x="0" y="0" w="1000" h="1000" scale ="1" icon="1"/>
+	</views>
 	<topology>
 		<!-- Signals-->
-		<signal id="1" name="AI1" x="128" y="90" shunt="false" orientation ="east"/>
+		<signal id="1" name="AI1" x="22" y="300" shunt="false" orientation ="north"/>
 		<signal id="2" name="A1" x="87" y="300" shunt="false" orientation ="north"/>
 
 		<!--<signal id="3" name="E2" x="120" y="390" shunt="true" orientation ="east" advance="A2" circuit="C03"/>-->
@@ -23,7 +39,7 @@
 						<tr x1="0" y1="244" x2="0" y2="205"/>
 						<tr x1="0" y1="195" x2="0" y2="70"/>
 						<tr x1="0" y1="71" x2="71" y2="0"/>
-						<tr x1="70" y1="0" x2="110" y2="0"/>
+						<tr x1="70" y1="0" x2="530" y2="0"/>
 					</active>
 				</v>
 			</traces>
@@ -39,8 +55,7 @@
 				</v>
 			</traces>
 		</section>
-		<crossing x="43" y="280" l="80" id="1" name="PN1" orientation="east"/>
-		
+		<crossing x="43" y="280" l="80" id="1" name="PN1" orientation="east"/>		
 		<!--<section id="3" name="C03" x="115" y="80">
 			<label x="90" y="4"/>
 			<frogs>
@@ -91,8 +106,7 @@
 					</active>
 				</v>
 			</traces>
-		</section>-->
-		
+		</section>-->		
 		<section id="4" name="C04" x="75" y="115">
 			<label x="150" y="37"/>
 			<frogs>
@@ -281,7 +295,7 @@
 			</traces>
 		</section>
 		<platform x="340" y="195" l="175" orientation="north"/>
-		<section id="9" name="C05" x="125" y="80">
+		<!--<section id="9" name="C05" x="125" y="80">
 			<label x="82" y="4"/>
 			<traces>
 				<v id="0" >
@@ -290,7 +304,7 @@
 					</active>
 				</v>
 			</traces>
-		</section>
+		</section>-->
 		<section id="10" name="C08" x="545" y="115">
 			<label x="128" y="4"/>
 			<frogs>
@@ -359,17 +373,45 @@
 				</v>
 			</traces>
 		</section>	
-	</topology>	
-	<views>
-		<view id="0" name="Esquema principal" comment="Vista principal del enclavamiento a nivel de CTC" 
-			  x="-100" y="0" w="1400" h="800" scale="1" icon="0"/>
-		<view id="1" name="Marratxinet" comment="Estación de Marratxinet desde las avanzadas en los túneles hasta los circuitos de salida"
-			  x="-20" y="0" w="725" h="350" scale="1" icon="1"/>
-		<view id="2" name="Contenedor" comment="Estación secundaria junto a la Landaluce"
-			  x="0" y="0" w="1000" h="1000" scale ="1" icon="1"/>	
-	</views>
+
+		<section id="13" name="C09" x="10" y="328">
+			<traces>
+				<v id="0">
+					<active>
+						<tr x1="0" y1="0" x2="0" y2="50"/>
+						<tr x1="0" y1="50" x2="70" y2="130"/>
+						<tr x1="70" y1="130" x2="565" y2="130"/>
+					</active>
+				</v>
+			</traces>
+		</section>	
+		<section id="14" name="C10" x="75" y="328">
+			<traces>
+				<v id="0">
+					<active>
+						<tr x1="0" y1="0" x2="0" y2="50"/>
+						<tr x1="-1" y1="49" x2="21" y2="71"/>
+						<tr x1="20" y1="70" x2="500" y2="70"/>
+					</active>
+				</v>
+			</traces>
+		</section>	
+
+	
+</topology>	
+	
 	<itineraries>
 		<!-- Descripción de los posibles itinerarios que se pueden crear con este enclavamiento -->		
+		<itin id="SHC02M1" name="Entrada maniobra vía 1" group="Entradas" origin="E1" destination="M1" key="E1,M1" shunting="true">
+			<pre ckfree="C04"/>
+			<chg>
+				<pos cir="C04" set="0"/>
+				<signal id="A1" set="stopAdvice"/>
+				<signal id="E1" set="override"/>
+				<crossing id="PN1" set="close"/>
+			</chg>
+			<post setlock="C04,M1"/>
+		</itin>
 		<itin id="C02M1" name="Entrada vía 1" group="Entradas" origin="E1" destination="M1" key="E1,M1">
 			<pre ckfree="C04,M1"/>
 			<chg>
@@ -377,16 +419,6 @@
 				<signal id="A1" set="free"/>
 				<signal id="E1" set="stopAdvice"/>
 				<signal id="S1" set="stop"/>
-				<crossing id="PN1" set="close"/>
-			</chg>
-			<post setlock="C04,M1"/>
-		</itin>
-		<itin id="SHC02M1" name="Entrada maniobra vía 1" group="Entradas" origin="E1" destination="M1" key="E1,M1" shunting="true">
-			<pre ckfree="C04"/>
-			<chg>
-				<pos cir="C04" set="0"/>
-				<signal id="A1" set="stopAdvice"/>
-				<signal id="E1" set="override"/>
 				<crossing id="PN1" set="close"/>
 			</chg>
 			<post setlock="C04,M1"/>

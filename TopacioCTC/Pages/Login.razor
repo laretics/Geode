@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@using MontefaroMatias.Users
 @inject TopacioAuthService mvarAuthenticator
 @inject NavigationManager Navigation
 
@@ -22,16 +23,15 @@
 
     private async Task HandleLogin()
     {
-        if (mvarAuthenticator.Authenticate(loginModel.Username, loginModel.Password))
+        if(await mvarAuthenticator.Authenticate(loginModel.Username,loginModel.Password))
         {
-            await TopacioAuthService.SetToken();
-            await TopacioAuthService.SetUserName(loginModel.Username);
             Navigation.NavigateTo("/");
         }
         else
         {
-            // Handle failed login
+            //Mensaje de fallo de sesión
         }
+        StateHasChanged();
     }
 
     private class LoginModel

@@ -1,6 +1,9 @@
-﻿using MontefaroMatias.LayoutView;
+﻿using MontefaroMatias;
+using MontefaroMatias.LayoutView;
 using MontefaroMatias.Locking;
+using MontefaroMatias.Users;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace TopacioCTC.Components
 {
@@ -53,6 +56,22 @@ namespace TopacioCTC.Components
             HttpContent contenido = respuesta.Content;
             DateTime auxHora = await contenido.ReadFromJsonAsync<DateTime>();
             return auxHora;
+        }
+
+        public async Task<User?> tryLogin(User? rhs)
+        {
+            string request = composeCommand("user");
+            string json = JsonSerializer.Serialize(rhs, SharedSerializeContext.Default.User);
+            HttpContent content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage respuesta = await mvarClient.PutAsync(request, content);
+            if (!respuesta.IsSuccessStatusCode)
+                return null; //Recibió respuesta equivocada.
+            using (Stream respuestaStream = await respuesta.Content.ReadAsStreamAsync())
+            {
+                //string? contenidoComoCadena = await new StreamReader(respuestaStream).ReadToEndAsync();
+                User? salida = await JsonSerializer.DeserializeAsync(respuestaStream, SharedSerializeContext.Default.User);
+                return salida;
+            }
         }
 
         public async Task processOrder(string order)
