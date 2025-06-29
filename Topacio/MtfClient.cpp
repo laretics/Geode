@@ -74,16 +74,16 @@ bool helper::MtfClient::deserializeV1()
 {
 	pp(F("Deserialize V1")); pl();
 	mvarInterface.Led(1, true);
+	//memoryDump(32);
+	
 	//Lectura de MAC
-	memoryDump(32);
-
 	uint16_t auxPointer = CLIENT_ADDRESS_START; //Dirección para leer el MAC
 	auxPointer = mvarEthernet.deserializeV1(auxPointer);
-	mvarEthernet.showParams();
-	mvarInterface.Led(2, true);
+	//mvarEthernet.showParams();
+	mvarInterface.Led(2, true);	
 	mcolDevices.deserializeV1(auxPointer);
 	mvarInterface.Led(2, false);
-	showConfig();
+	//showConfig();
 	pp(F("Done!")); pl();
 	mvarEnabled = true;
 	return true;

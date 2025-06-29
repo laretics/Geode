@@ -6,7 +6,7 @@ helper::MtfClientDevices::MtfClientDevices()
 
 bool helper::MtfClientDevices::deserializeV1(uint16_t pointer)
 {
-	pp(F("Leyendo address ")); pp(pointer); pl();
+	pp(F("Leyendo address ")); pp(pointer); pl();	//Debería ser 14.
 	uint16_t auxDirComienzo = EEPROM.read(pointer++); //Esta es la dirección de memoria donde comienza a leer la estructura
 	pp(F("Comienzo estructura: ")); pp(auxDirComienzo); pl();
 	uint8_t auxMotorPointer = EEPROM.read(pointer++); //Dirección del primer motor

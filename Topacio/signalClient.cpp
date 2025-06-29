@@ -65,6 +65,7 @@ void helper::signalClient::loop()
 {
     //Loop sólo tiene sentido con el servo.
     if (NULL == mvarServo) return;
+
     if (mvarSemaphorePosition != mvarSemaphoreTarget)
     {
         if (mvarSemaphorePosition > mvarSemaphoreTarget)
@@ -247,8 +248,10 @@ void helper::signalClient::auxRefresh()
         {
             //pp(F("Encendido = bit_check(")); pp(mvarLights); pp(F(",")); pp(i); pp(F(");")); pl();
             encendido = bit_check(mvarLights, i);
-            digitalWrite(mcolLedPort[i], mcolInverted[i] ^ encendido);
-        }
+			bool auxValue = (mcolInverted[i] ^ encendido);
+            digitalWrite(mcolLedPort[i], auxValue);
+            //pp(F("digitalWrite(")); pp(mcolLedPort[i]); pp(F(",")); pp(auxValue); pp(F(")")); pl();
+        }        
     }
-
+    pl();
 }

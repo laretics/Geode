@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,7 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
 	<EnableJsonSourceGeneration>true</EnableJsonSourceGeneration>
-    <PublishAot>true</PublishAot>
+	<PublishAot>false</PublishAot>
+    <Configurations>Debug;Release;Raspi Parque 2</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

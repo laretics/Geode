@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    <Configurations>Debug;Release;Raspi Parque;Raspi Parque 2</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

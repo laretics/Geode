@@ -1,11 +1,13 @@
 ﻿@page "/layout/{Id:int}"
 @using MontefaroMatias.LayoutView.Elements
+@using MontefaroMatias.LayoutView.Elements.Layout
 @using MontefaroMatias.Locking
 @using MontefaroMatias.Users
 @inject TopacioClient mvarTopacioClient
 @inject StorageService mvarStorageService
+@inject IJSRuntime mvarJSRuntime
 <div class="d-flex justify-content-center align-items-center bg-black">
-    <MtCanvas View=view @bind-Drawables="mcolDrawables"/>
+    <MtCanvas View=view StaticView=mvarStorageService.RenderCache/>
 </div>
 <div class="container-md">
     <div class="row">
@@ -44,7 +46,7 @@
     private int currentUserLevel { get => (null == CurrentUser) ? 0 : CurrentUser.Level; }
     private MontefaroMatias.LayoutView.Topology mvartt = new Topology();
     private View? view { get; set; } = new View();
-    private List<Element> mcolDrawables { get; set; } = new List<Element>();
+    //private List<Element> mcolDrawables { get; set; } = new List<Element>();
     private Dictionary<string, DynamicElement> mcolDynamics = new Dictionary<string, DynamicElement>();
     private DynamicElement? mvarOrigin = null;
     private portableOrders mcolOrders { get; set; } = new portableOrders();
@@ -53,11 +55,19 @@
     private bool mvarOccupancyRequested = false;
 
     protected async override Task OnInitializedAsync()
-    {        
-        PortableTopology? portaTopo = await mvarTopacioClient.getPortableTopology();
-        if (null != portaTopo)
-            mvartt.portableElement = portaTopo;
-
+    {
+        //En esta rutina de la carga del Layout es donde haré una sola vez la carga de los datos de la topología.
+        if (null == mvarStorageService.RenderCache)
+        {
+            PortableTopology? portaTopo = await mvarTopacioClient.getPortableTopology();
+            MontefaroMatias.LayoutView.Topology auxTopo = new Topology();
+            if (null != portaTopo)
+            {
+                auxTopo.portableElement = portaTopo;
+                mvarStorageService.Topology = auxTopo;
+                mvarStorageService.ComposeRenderCache();                
+            }
+        }
         portableOrders? auxOrders = await mvarTopacioClient.getOrders();        
         if (null != auxOrders)
             mcolOrders = auxOrders;
@@ -67,10 +77,7 @@
     }
     protected override async Task OnParametersSetAsync()
     {
-        this.view = mvarStorageService.mcolViews.view(Id);
-        Element.scaleValue = view.Scale;
-        mcolDynamics = mvartt.DynamicElements;
-        mcolDrawables = mvartt.Elements;
+        this.view = mvarStorageService.Views.view(Id);
     }
     protected async Task GetTopoAsync()
     {
@@ -89,11 +96,22 @@
             {
                 if(mvartt.Circuits.ContainsKey(cir.nme))
                 {
-                    LayoutUnit circuito = mvartt.Circuits[cir.nme];
+                    Unit circuito = mvartt.Circuits[cir.nme];
                     circuito.portableElement = cir;
                 }
             }
         }
+    }
+    /// <summary>
+    /// Actualizaremos los colores y la presentación del enclavamiento
+    /// </summary>
+    /// <returns></returns>
+    protected async Task UpdateTopo()
+    {
+        foreach (Unit elemento in mvartt.Circuits.Values)
+        {
+            await elemento.RenderDynamic(mvarJSRuntime);
+        }        
     }
     /// <summary>
     /// Este método se activa cada vez que haya recibido alguna notificación
@@ -104,7 +122,8 @@
     private async Task OnUpdateReceived()
     {
         await GetTopoAsync();
-        StateHasChanged();
+        await UpdateTopo();
+        //StateHasChanged();
     }
 
     /// <summary>
@@ -205,7 +224,7 @@
     {
         //Activamos la ocupación forzada.
         mvarOccupancyRequested = true;
-        foreach(LayoutUnit elemento in mvartt.Circuits.Values)
+        foreach(Unit elemento in mvartt.Circuits.Values)
         {
             elemento.selected = true;
         }
@@ -269,46 +288,46 @@
         mvartt.selElements.Clear();
     }
 
-    protected void OnShunt(int via)
-    {
-        mvartt.ChangeCrossing("PN1", Common.crossingStatus.csOpen);
-        switch (via)
-        {
-            case 1:
-                mvartt.ChangeStatus("C02,C04", Common.layoutTraceStatus.ltShunt);
-                mvartt.ChangeStatus("M1", Common.layoutTraceStatus.ltOccupied);
-                mvartt.ChangePosition("C04", 0);
-                mvartt.ChangePosition("C06", 0);
-                mvartt.setSignalOrder("A1", Common.orderType.toAvisoDeParada);
-                mvartt.setSignalOrder("E1", Common.orderType.toRebaseAutorizado);
-                break;
-            case 2:
-                mvartt.ChangeStatus("C02,C04", Common.layoutTraceStatus.ltShunt);
-                mvartt.ChangeStatus("M2", Common.layoutTraceStatus.ltOccupied);
-                mvartt.ChangePosition("C04", 1);
-                mvartt.ChangePosition("C06", 1);
-                mvartt.setSignalOrder("A1", Common.orderType.toAvisoDeParada);
-                mvartt.setSignalOrder("E1", Common.orderType.toRebaseAutorizado);
-                break;
-            case 3:
-                mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
-                mvartt.ChangeStatus("M3", Common.layoutTraceStatus.ltOccupied);
-                mvartt.ChangePosition("C03", 1);
-                mvartt.ChangePosition("C08", 1);
-                mvartt.setSignalOrder("A2", Common.orderType.toAvisoDeParada);
-                mvartt.setSignalOrder("E2", Common.orderType.toRebaseAutorizado);
-                break;
-            case 4:
-                mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
-                mvartt.ChangeStatus("M4", Common.layoutTraceStatus.ltOccupied);
-                mvartt.ChangePosition("C03", 2);
-                mvartt.ChangePosition("C08", 0);
-                mvartt.setSignalOrder("A2", Common.orderType.toAvisoDeParada);
-                mvartt.setSignalOrder("E2", Common.orderType.toRebaseAutorizado);
-                break;
-        }
-        //auxSender.send(mvartt);
-    }
+    // protected void OnShunt(int via)
+    // {
+    //     mvartt.ChangeCrossing("PN1", Common.crossingStatus.csOpen);
+    //     switch (via)
+    //     {
+    //         case 1:
+    //             mvartt.ChangeStatus("C02,C04", Common.layoutTraceStatus.ltShunt);
+    //             mvartt.ChangeStatus("M1", Common.layoutTraceStatus.ltOccupied);
+    //             mvartt.ChangePosition("C04", 0);
+    //             mvartt.ChangePosition("C06", 0);
+    //             mvartt.setSignalOrder("A1", Common.orderType.toAvisoDeParada);
+    //             mvartt.setSignalOrder("E1", Common.orderType.toRebaseAutorizado);
+    //             break;
+    //         case 2:
+    //             mvartt.ChangeStatus("C02,C04", Common.layoutTraceStatus.ltShunt);
+    //             mvartt.ChangeStatus("M2", Common.layoutTraceStatus.ltOccupied);
+    //             mvartt.ChangePosition("C04", 1);
+    //             mvartt.ChangePosition("C06", 1);
+    //             mvartt.setSignalOrder("A1", Common.orderType.toAvisoDeParada);
+    //             mvartt.setSignalOrder("E1", Common.orderType.toRebaseAutorizado);
+    //             break;
+    //         case 3:
+    //             mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
+    //             mvartt.ChangeStatus("M3", Common.layoutTraceStatus.ltOccupied);
+    //             mvartt.ChangePosition("C03", 1);
+    //             mvartt.ChangePosition("C08", 1);
+    //             mvartt.setSignalOrder("A2", Common.orderType.toAvisoDeParada);
+    //             mvartt.setSignalOrder("E2", Common.orderType.toRebaseAutorizado);
+    //             break;
+    //         case 4:
+    //             mvartt.ChangeStatus("C01,C03", Common.layoutTraceStatus.ltShunt);
+    //             mvartt.ChangeStatus("M4", Common.layoutTraceStatus.ltOccupied);
+    //             mvartt.ChangePosition("C03", 2);
+    //             mvartt.ChangePosition("C08", 0);
+    //             mvartt.setSignalOrder("A2", Common.orderType.toAvisoDeParada);
+    //             mvartt.setSignalOrder("E2", Common.orderType.toRebaseAutorizado);
+    //             break;
+    //     }
+    //     //auxSender.send(mvartt);
+    // }
 
 
 

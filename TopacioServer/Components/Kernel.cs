@@ -11,30 +11,38 @@ namespace TopacioServer.Components
     {
         internal LayoutSystem mainSystem { get; set; }
         internal UdpSender senderUdp { get; set; }
-        internal bool udpEnabled { get; set; }
+        internal string FileName { get;set; }
+        internal bool UdpEnabled { get; set; }
+        internal string? UdpPort { get; set; }
+        internal string? UdpDestination { get; set; }
+
         public Kernel()
         {
-            XMLImporter auxImporter = new XMLImporter();
-            string auxProjectFile = Environment.GetEnvironmentVariable("KERNEL_FILENAME") ?? "Parque.xml";
             mainSystem = new LayoutSystem();
-            if (auxImporter.loadScheme(auxProjectFile))
+            this.FileName = Environment.GetEnvironmentVariable("KERNEL_FILENAME") ?? "Parque.xml";
+            loadScheme();
+            UdpDestination = Environment.GetEnvironmentVariable("UDP_DESTINATION");
+            UdpPort = Environment.GetEnvironmentVariable("UDP_PORT");
+            string? auxUdpEnabled = Environment.GetEnvironmentVariable("UDP_ENABLED");
+            UdpEnabled = (null != auxUdpEnabled && auxUdpEnabled.Length > 0 && auxUdpEnabled.ToUpper()[0] == 'T');
+            senderUdp = new UdpSender(UdpDestination, UdpPort);
+            Topology.OnUpdateCallback = () => doSendUdp();
+        }
+        public void loadScheme()
+        {
+            XMLImporter auxImporter = new XMLImporter();            
+            if (auxImporter.loadScheme(this.FileName))
             {
                 LayoutSystem? auxSistema = auxImporter.getSystem();
-                if (null!=auxSistema)
+                if (null != auxSistema)
                     mainSystem = auxSistema;
-                
+
                 mainSystem.Topology.Dai();
             }
-            string? auxIpUDPDestination = Environment.GetEnvironmentVariable("UDP_DESTINATION");
-            string? auxPortUDPDestination = Environment.GetEnvironmentVariable("UDP_PORT");
-            string? auxUdpEnabled = Environment.GetEnvironmentVariable("UDP_ENABLED");
-            udpEnabled = (null != auxUdpEnabled && auxUdpEnabled.Length > 0 && auxUdpEnabled.ToUpper()[0] == 'T');
-            senderUdp = new UdpSender(auxIpUDPDestination, auxPortUDPDestination);
-            Topology.OnUpdateCallback = () => doSendUdp();
         }
         private void doSendUdp()
         {
-            if(udpEnabled&&null!=senderUdp&&null!=mainSystem)
+            if(UdpEnabled&&null!=senderUdp&&null!=mainSystem)
                 senderUdp.send(mainSystem.Topology);
         }
     }

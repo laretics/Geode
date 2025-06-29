@@ -1,26 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.JSInterop;
+using MontefaroMatias.LayoutView.Elements.Portables;
 
 namespace MontefaroMatias.LayoutView.Elements
 {
     public abstract class Element:BasicSerializableElement
     {
         public static int scaleValue { get; set; } = 1;
-        public long X { get; set; } //Es la posición a representar de este elemento
-        public long Y { get; set; } //Su contenido se representa relativa a la posición total.        
+        public int X { get; set; } //Es la posición a representar de este elemento
+        public int Y { get; set; } //Su contenido se representa relativa a la posición total.        
         public string? name { get; set; }
         public Element():base()
         {}
         public override bool parse(XmlNode node)
         {
-            X = parseLong(node, "x");
-            Y = parseLong(node, "y");
+            X = parseInt(node, "x");
+            Y = parseInt(node, "y");
             name = parseString(node, "name");
             if (X >= 0 && Y >= 0) return true;
             return false;
@@ -41,6 +44,8 @@ namespace MontefaroMatias.LayoutView.Elements
                 deserializeFromPortable(value);
             }
         }
+
+
         protected virtual void deserializeFromPortable(PortableElement rhs)
         {
             this.X = rhs.X;
@@ -50,6 +55,42 @@ namespace MontefaroMatias.LayoutView.Elements
         protected RenderTreeBuilder mvarBuilder { get; set; }
         protected View mvarCurrentView { get; set; } //Vista actual en la que se dibuja este elemento.
 
+        /// <summary>
+        /// Esta función genera el elemento para su visualización en un DOM.
+        /// </summary>
+        /// <param name="engine"></param>
+
+        #region "Compilación SVG Estática"
+
+        public virtual void CompileSVG(MontefaroMatias.LayoutView.SVGRender renderer)
+        {
+            renderer.setOffset(this.X, this.Y);
+        }
+        #endregion "Compilación SVG Estática"
+        protected async Task dynChangeStroke(string id, string color, IJSRuntime runtime)
+        {
+            if (null != runtime)
+            {
+                await runtime.InvokeVoidAsync("dynaChangeStroke", id, color);
+            }
+        }
+        protected async Task dynChangeFill(string id, string color, IJSRuntime runtime)
+        {
+            if (null != runtime)
+            {
+                await runtime.InvokeVoidAsync("dynaChangeFill", id, color);
+            }
+        }
+        protected async Task dynChangeVisible(string id, bool visible, IJSRuntime runtime)
+        {
+            if (null != runtime)
+            {
+                await runtime.InvokeVoidAsync("dynaChangeVisible", id, visible);
+            }
+        }
+
+
+        #region "Código deprecado"
         //Invoca las funciones de dibujo de este elemento.
         public virtual bool compose(RenderTreeBuilder builder, View view)
         {
@@ -59,7 +100,6 @@ namespace MontefaroMatias.LayoutView.Elements
             long yy = Y / scaleValue;   
             return (xx >= view.X && xx <= (view.X + view.Width) && yy >= view.Y && yy <= (view.Y + view.Height));            
         }      
-
         //Estas funciones llaman a las correspondientes de la estructura que componen los trazos.
         protected void addCircle(int xx, int yy, int r, string fill)
         {
@@ -132,6 +172,16 @@ namespace MontefaroMatias.LayoutView.Elements
             mvarBuilder.CloseElement();
         }
 
+        protected int openGroup(string id)
+        {
+            mvarBuilder.OpenElement(35, "g");
+            return 36;
+        }
+        protected void closeGroup()
+        {
+            mvarBuilder.CloseElement();
+        }
+
         protected void addLabel(bool absolute,int xx, int yy, int w, int h,string bootstrapColor, string? text)
         {
             if(1==scaleValue)
@@ -161,7 +211,7 @@ namespace MontefaroMatias.LayoutView.Elements
         }
         protected virtual long xScale(int xx){ return (X + xx-mvarCurrentView.X)/scaleValue;}
         protected virtual long yScale(int yy) { return (Y + yy-mvarCurrentView.Y)/scaleValue;}
-
+        #endregion "Códigpo deprecado"
         //Parámetros XML
 
         protected Common.Orientation parseOrientation(XmlNode node, string attributeName)
@@ -186,24 +236,5 @@ namespace MontefaroMatias.LayoutView.Elements
         }
     }
 
-    /// <summary>
-    /// Este elemento es como el normal, pero está preparado para ser serializado
-    /// </summary>
-    public class PortableElement
-    {
-        public PortableElement(byte type) 
-        { 
-            typ = type; 
-        }
-        public void setBase(long x, long y, string? name)
-        {
-            this.X = x;
-            this.Y = y;
-            this.nme = name;
-        }
-        public long X { get; set; } //Es la posición a representar de este elemento
-        public long Y { get; set; } //Su contenido se representa relativa a la posición total.
-        public string? nme { get; set; }
-        public virtual byte typ { get; private set; } //Este tipo sirve para la deserialización
-    }
+
 }

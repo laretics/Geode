@@ -1,0 +1,76 @@
+0 000   69      _#___#_#        Code header
+1 001   15      ____####        Code version
+2 002   0       ________        User Interface
+3 003   222     ##_####_        MAC[0]          DE
+4 004   173     #_#_##_#        MAC[1]          AD
+5 005   190     #_#####_        MAC[2]          BE
+6 006   239     ###_####        MAC[3]          EF
+7 007   254     #######_        MAC[4]          FE
+8 008   1       _______#        MAC[5]          01
+9 009   192     ##______        IP[1]           192
+A 010   168     #_#_#___        IP[1]           168
+B 011   0       ________        IP[1]           0
+C 012   11      ____#_##        IP[1]           11
+D 013   24      ___##___        Address range
+E 014   25      ___##__#        Structure begin address
+F 015   16      ___#____        First Motor address
+10 016  32      __#_____        Motor           Enable port
+11 017  33      __#____#                        movA Port
+12 018  34      __#___#_                        movB Port
+13 019  35      __#___##        Motor           Enable port
+14 020  36      __#__#__                        movA Port
+15 021  37      __#__#_#                        movB Port
+16 022  38      __#__##_        Motor           Enable port
+17 023  39      __#__###                        movA Port
+18 024  40      __#_#___                        movB Port
+19 025  2       ______#_        Signal count
+1A 026  2       ______#_        Layout units count
+1B 027  0       ________        Layout circuits count
+1C 028  3       ______##        Device E2               Id
+1D 029  255     ########                        Servo Address
+1E 030  4       _____#__                        Lights count 4
+1F 031  25      ___##__#                        Color green port | inverted False
+20 032  152     #__##___                        Color red port | inverted True
+21 033  27      ___##_##                        Color yellow port | inverted False
+22 034  26      ___##_#_                        Color white port | inverted False
+23 035  4       _____#__        Device E1               Id
+24 036  255     ########                        Servo Address
+25 037  4       _____#__                        Lights count 4
+26 038  29      ___###_#                        Color green port | inverted False
+27 039  156     #__###__                        Color red port | inverted True
+28 040  31      ___#####                        Color yellow port | inverted False
+29 041  30      ___####_                        Color white port | inverted False
+2A 042  1       _______#        Device c03              Id
+2B 043  130     #_____#_                        Frogs Count 2| Sequential True
+2C 044  3       ______##                        Itineraries Count
+2D 045  16      ___#____        Frog            Device address
+2E 046  250     #####_#_                        Timeout L (250 Milliseconds)
+2F 047  0       ________                        Timeout H
+30 048  255     ########                        straight detector port
+31 049  255     ########                        curve detector port
+32 050  19      ___#__##        Frog            Device address
+33 051  250     #####_#_                        Timeout L (250 Milliseconds)
+34 052  0       ________                        Timeout H
+35 053  255     ########                        straight detector port
+36 054  255     ########                        curve detector port
+37 055  1       _______#        Paso directo c05                Commands count
+38 056  128     #_______                        Frog index (0) | Position Flag (128, Straight)
+39 057  2       ______#_        Entrada a via 3         Commands count
+3A 058  0       ________                        Frog index (0) | Position Flag (0, Curve)
+3B 059  129     #______#                        Frog index (1) | Position Flag (128, Straight)
+3C 060  2       ______#_        Entrada a via 4         Commands count
+3D 061  0       ________                        Frog index (0) | Position Flag (0, Curve)
+3E 062  1       _______#                        Frog index (1) | Position Flag (0, Curve)
+3F 063  2       ______#_        Device c04              Id
+40 064  129     #______#                        Frogs Count 1| Sequential True
+41 065  2       ______#_                        Itineraries Count
+42 066  22      ___#_##_        Frog            Device address
+43 067  10      ____#_#_                        Timeout L (10 Milliseconds)
+44 068  0       ________                        Timeout H
+45 069  255     ########                        straight detector port
+46 070  255     ########                        curve detector port
+47 071  1       _______#        Entrada a via 1         Commands count
+48 072  128     #_______                        Frog index (0) | Position Flag (128, Straight)
+49 073  1       _______#        Entrada a via 2         Commands count
+4A 074  0       ________                        Frog index (0) | Position Flag (0, Curve)
+                 CRC: 85

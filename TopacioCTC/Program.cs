@@ -13,7 +13,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddSingleton<StorageService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(mvarServerUri) });
 builder.Services.AddScoped<TopacioClient>(); //Cliente para obtener topología y estado del enclavamiento
-builder.Services.AddSingleton<StorageService>();
 builder.Services.AddScoped<TopacioAuthService>(sp =>
 {    
     return new TopacioAuthService(sp);

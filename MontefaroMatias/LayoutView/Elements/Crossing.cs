@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using MontefaroMatias.LayoutView.Elements.Portables;   
 
 namespace MontefaroMatias.LayoutView.Elements
 {
@@ -53,38 +54,34 @@ namespace MontefaroMatias.LayoutView.Elements
             length = parseInt(node,"l");
             return true;            
         }
-        public override bool compose(RenderTreeBuilder builder,View view)
+
+        public override void CompileSVG(SVGRender renderer)
         {
-            if(base.compose(builder,view))
+            base.CompileSVG(renderer);
+            int mitad = length / 2;
+            int extremo1 = -1 * mitad;
+            int extremo2 = mitad;
+            int cuerno = 8;
+            renderer.openGroup(string.Format("crs_{0}", id), true, $"stroke:red;stroke-width:4");
+            switch (orientation)
             {
-                openContainerRegion();
-                int mitad = length / 2;
-                int extremo1 = -1 * mitad;
-                int extremo2 = mitad;
-                int cuerno = 8;
-                switch (orientation)
-                {
-                    case Common.Orientation.North:
-                    case Common.Orientation.South:
-                        addLine(0, extremo1, 0, extremo2, statusColor, 4);
-                        addLine(-cuerno, extremo1 - cuerno, 0, extremo1, statusColor, 4);
-                        addLine(cuerno, extremo1 - cuerno, 0, extremo1, statusColor, 4);
-                        addLine(-cuerno, extremo2 + cuerno, 0, extremo2, statusColor, 4);
-                        addLine(cuerno, extremo2 + cuerno, 0, extremo2, statusColor, 4);
-                        break;
-                    case Common.Orientation.East:
-                    case Common.Orientation.West:
-                        addLine(extremo1, 0, extremo2, 0, statusColor, 4);
-                        addLine(extremo1 - cuerno, -cuerno, extremo1, 0, statusColor, 4);
-                        addLine(extremo1 - cuerno, cuerno, extremo1, 0, statusColor, 4);
-                        addLine(extremo2 + cuerno, -cuerno, extremo2, 0, statusColor, 4);
-                        addLine(extremo2 + cuerno, cuerno, extremo2, 0, statusColor, 4);
-                        break;
-                }
-                closeContainerRegion();
-                return true;
+                case Common.Orientation.North:
+                case Common.Orientation.South:
+                    renderer.line(0, extremo1, 0, extremo2);
+                    renderer.line(-cuerno, extremo1 - cuerno, 0, extremo1);
+                    renderer.line(cuerno, extremo1 - cuerno, 0, extremo1);
+                    renderer.line(-cuerno, extremo2 + cuerno, 0, extremo2);
+                    renderer.line(cuerno, extremo2 + cuerno, 0, extremo2);
+                    break;
+                default:
+                    renderer.line(extremo1, 0, extremo2, 0);
+                    renderer.line(extremo1 - cuerno, -cuerno, extremo1, 0);
+                    renderer.line(extremo1 - cuerno, cuerno, extremo1, 0);
+                    renderer.line(extremo2 + cuerno, -cuerno, extremo2, 0);
+                    renderer.line(extremo2 + cuerno, cuerno, extremo2, 0);
+                    break;
             }
-            return false;
+            renderer.closeGroup();
         }
         protected string statusColor
         {

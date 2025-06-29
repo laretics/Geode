@@ -1,5 +1,6 @@
 ﻿using MontefaroMatias.LayoutView;
 using MontefaroMatias.LayoutView.Elements;
+using MontefaroMatias.LayoutView.Elements.Layout;
 using System.Net;
 using System.Net.Sockets;
 namespace TopacioServer.Components
@@ -20,7 +21,7 @@ namespace TopacioServer.Components
         {
             bool salida = true;
             List<Signal> auxSignals = topo.signalsChanged();
-            List<LayoutUnit> auxCircuits = topo.circuitsChanged();
+            List<Unit> auxCircuits = topo.circuitsChanged();
             int auxPayLoad = 8 +  //Cabecera
                 (auxSignals.Count * 2) + //Id Señal + valor
                 (auxCircuits.Count * 2); //Id Circuito + valor
@@ -39,10 +40,10 @@ namespace TopacioServer.Components
                 paquete[puntero++] = (byte)auxSignal.id;
                 paquete[puntero++] = (byte)auxSignal.Order;
             }
-            foreach (LayoutUnit circuit in auxCircuits)
+            foreach (Unit circuit in auxCircuits)
             {
-                paquete[puntero++] = (byte)circuit.id;
-                paquete[puntero++] = (byte)circuit.currentPosition;
+                paquete[puntero++] = (byte)circuit.Id;
+                paquete[puntero++] = (byte)circuit.CurrentPosition;
             }
             //Ahora hacemos el envío
             UdpClient auxClient = new UdpClient();

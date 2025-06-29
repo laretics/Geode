@@ -58,6 +58,15 @@ namespace TopacioCTC.Components
             return auxHora;
         }
 
+        public async Task<string> getConfiguration()
+        {
+            string request = composeCommand("conf");
+            HttpResponseMessage respuesta = await sendGetRequest(request);
+            HttpContent contenido = respuesta.Content;
+            string salida = await contenido.ReadAsStringAsync();
+            return salida;
+        }
+
         public async Task<User?> tryLogin(User? rhs)
         {
             string request = composeCommand("user");
@@ -72,6 +81,10 @@ namespace TopacioCTC.Components
                 User? salida = await JsonSerializer.DeserializeAsync(respuestaStream, SharedSerializeContext.Default.User);
                 return salida;
             }
+        }
+        public async Task LayoutRefreshRequest()
+        {
+            HttpResponseMessage respuesta = await sendPostRequest("rfh", "");
         }
 
         public async Task processOrder(string order)

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using MontefaroMatias.LayoutView.Elements.Portables;
 using static MontefaroMatias.Common;
 
 namespace MontefaroMatias.LayoutView.Elements
@@ -58,7 +59,7 @@ namespace MontefaroMatias.LayoutView.Elements
         {
             this.Order = orderType.toParada;
         }
-        public Signal(long xx, long yy,Common.Orientation orient,int id, string key,bool shunt=false):base()
+        public Signal(int xx, int yy,Common.Orientation orient,int id, string key,bool shunt=false):base()
         {
             X = xx; Y = yy;
             orientation = orient;
@@ -77,45 +78,87 @@ namespace MontefaroMatias.LayoutView.Elements
             advance = parseString(node, "advance");
             return true;
         }
-        public override bool compose(RenderTreeBuilder builder, View view)
+
+        public override void CompileSVG(SVGRender renderer)
         {
-            if (!base.compose(builder, view)) return false;
-            openContainerRegion();
-            switch (orientation)
+            base.CompileSVG(renderer);
+            renderer.openGroup(string.Format("sig_{0}", id), true);
+            switch(orientation)
             {
-                case Common.Orientation.North:
-                    addLine(- 5, 23,  5, 23, MastilColor, 3); //Base
-                    addLine(0, 5, 0, 22, MastilColor, 2); //Mástil
-                    addSquare(0, 10, 9, SquareColor); //Rebase autorizado
-                    addCircle(0, 0, 5, CircleColor); //Círculo
-                    labelX = -8;labelY = 24;
+                case Orientation.North:
+                    renderer.openGroup("mst", true, "stroke:red;stroke-width:2");
+                    renderer.openGroup("bs",true, "stroke-width:3");
+                    renderer.line(-5, 23, 5, 23); //Base
+                    renderer.closeGroup();
+                    renderer.line(0, 5, 0, 22); //Mástil
+                    renderer.closeGroup();
+                    renderer.openGroup("rbs", true, "fill:transparent");
+                    renderer.square(0, 10, 9); //Rebase autorizado
+                    renderer.closeGroup();
+                    renderer.openGroup("cir", true, "fill:red");
+                    renderer.circle(0, 0, 5); //Círculo
+                    renderer.closeGroup();
+                    renderer.openGroup("lbl",true, "fill:lightgrey;");
+                    renderer.label(-8, 24, 24, 14, "white", name);
+                    //renderer.text(x: -8, y: 24, text: name);
+                    renderer.closeGroup();
                     break;
-                case Common.Orientation.South:
-                    addLine(- 5, - 5, 5, - 5, MastilColor, 3); //Base
-                    addLine(0, - 4, 0, 14, MastilColor, 2); //Mástil
-                    addSquare(0, 9, 9, SquareColor); //Rebase autorizado
-                    addCircle(0, 19, 5, CircleColor); //Círculo
-                    labelX = -16; labelY = -26;
+                case Orientation.South:
+                    renderer.openGroup("mst", true, "stroke:red;stroke-width:2");
+                    renderer.openGroup("bs", true, "stroke-width:3");
+                    renderer.line(-5, -5, 5, -5); //Base
+                    renderer.closeGroup();
+                    renderer.line(0, -4, 0, 14); //Mástil
+                    renderer.closeGroup();
+                    renderer.openGroup("rbs", true, "fill:transparent");
+                    renderer.square(0, 9, 9); //Rebase autorizado
+                    renderer.closeGroup();
+                    renderer.openGroup("cir", true, "fill:red");
+                    renderer.circle(0, 19, 5); //Círculo
+                    renderer.closeGroup();
+                    renderer.openGroup("lbl", true, "fill:lightgrey;");
+                    //renderer.text(x: -16, y: -26, text: name);
+                    renderer.label(-16, -26, 24, 14, "white", name);
+                    renderer.closeGroup();
                     break;
-                case Common.Orientation.East:
-                    addLine(- 2, -5,- 2, 5, MastilColor, 3); //Base
-                    addLine(- 2, 0, 16, 0, MastilColor, 2); //Mástil
-                    addSquare(11, 0, 9, SquareColor); //Rebase autorizado
-                    addCircle(21, 0, 5, CircleColor); //Círculo
-                    labelX = -30; labelY = -8;
+                case Orientation.East:
+                    renderer.openGroup("mst", true, "stroke:red;stroke-width:2");
+                    renderer.openGroup("bs", true, "stroke-width:3");
+                    renderer.line(-2, -5, -2, 5); //Base
+                    renderer.closeGroup();
+                    renderer.line(-2, 0, 16, 0); //Mástil
+                    renderer.closeGroup();
+                    renderer.openGroup("rbs", true, "fill:transparent");
+                    renderer.square(11, 0, 9); //Rebase autorizado
+                    renderer.closeGroup();
+                    renderer.openGroup("cir", true, "fill:red");
+                    renderer.circle(21, 0, 5); //Círculo
+                    renderer.closeGroup();
+                    renderer.openGroup("lbl", true, "fill:lightgrey;");
+                    //renderer.text(x: -30, y: -8, text: name);
+                    renderer.label(-30, -8, 24, 14, "white", name);
+                    renderer.closeGroup();
                     break;
-                case Common.Orientation.West:
-                    addLine(23, - 5, 23, 5, MastilColor, 3); //Base
-                    addLine( 5, 0, 22, 0, MastilColor, 2); //Mástil
-                    addSquare( 10, 0, 9, SquareColor); //Rebase autorizado
-                    addCircle(0, 0, 5, CircleColor); //Círculo
-                    labelX = 20; labelY = -8;
+                case Orientation.West:
+                    renderer.openGroup("mst", true, "stroke:red;stroke-width:2");
+                    renderer.openGroup("bs", true, "stroke-width:3");
+                    renderer.line(23, -5, 23, 5); //Base
+                    renderer.closeGroup();
+                    renderer.line(5, 0, 22, 0); //Mástil
+                    renderer.closeGroup();
+                    renderer.openGroup("rbs", true, "fill:transparent");
+                    renderer.square(10, 0, 9); //Rebase autorizado
+                    renderer.closeGroup();
+                    renderer.openGroup("cir", true, "fill:red");
+                    renderer.circle(0, 0, 5); //Círculo
+                    renderer.closeGroup();
+                    renderer.openGroup("lbl", true, "fill:lightgrey;");
+                    //renderer.text(x: 20, y: -8, text: name);
+                    renderer.label(20, -8, 24, 14, "white", name);
+                    renderer.closeGroup();
                     break;
             }
-            addLabel(false,labelX, labelY,32,32,"light",name);
-            inflateContainer(10, 10);
-            closeContainerRegion();
-            return true;
+            renderer.closeGroup();
         }
 
         public void Roll()
@@ -188,14 +231,6 @@ namespace MontefaroMatias.LayoutView.Elements
             }
         }
     }
-    public class PortableSignal : PortableElement
-    {
-        public PortableSignal() : base(3)
-        { }
-        public int id { get; set; }
-        public bool sh { get; set; }
-        public byte or { get; set; }
-        public byte com { get; set; } //Orden actual de esta señal
-    }
+
     
 }

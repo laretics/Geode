@@ -1,6 +1,6 @@
 ﻿@using MontefaroMatias.LayoutView.Elements
 @using Microsoft.AspNetCore.Components.Rendering
-@if(null==Drawables||null==view)
+@if(null==StaticView||null==view)
 {
     <PageTitle>Vista</PageTitle>
     <p>There is nothing to draw here.</p>
@@ -10,10 +10,9 @@ else
     <PageTitle>@view.Name</PageTitle>
     <svg width="@view.Width" height="@view.Height" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="black" />
-        @foreach (MontefaroMatias.LayoutView.Elements.Element el in Drawables)
-        {
-            @getFragment(el)
-        }
+        <g transform="scale(@view.Scale.ToString(System.Globalization.CultureInfo.InvariantCulture)) translate(@view.X,@view.Y)">
+            @StaticView;
+        </g>        
     </svg>
 }
 @code 
@@ -28,7 +27,5 @@ else
     [Parameter]
     public View? view { get; set; }
     [Parameter]
-    public List<Element>? Drawables{ get; set; }
-    [Parameter]
-    public EventCallback<List<Element>> DrawablesChanged { get; set; }
+    public RenderFragment? StaticView { get; set; }    
 }

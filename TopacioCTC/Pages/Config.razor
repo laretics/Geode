@@ -1,0 +1,52 @@
+﻿@page "/config"
+@inject TopacioClient mvarTopacioClient
+<h3>Vista de configuración</h3>
+<div class="mb-3">
+    <label class="form-label">Email address</label>
+    <input type="text" class="form-control" id="address" placeholder="@fileName" />   
+</div>
+<div class="mb-3">
+    <label class="form-label">Udp enabled</label>
+    <input type="text" class="form-control" id="enabled" placeholder="@udpEnabled" />
+</div>
+<div class="mb-3">
+    <label class="form-label">Udp port</label>
+    <input type="text" class="form-control" id="port" placeholder="@udpPort" />
+</div>
+<div class="mb-3">
+    <label class="form-label">Udp address</label>
+    <input type="text" class="form-control" id="address" placeholder="@udpDestination" />
+</div>
+<div class="mb-3">
+    <button type="button" class="btn btn-outline-primary" @onclick="@onRefreshLayoutRequest">Refrescar Layout</button>
+</div>
+
+@code {
+    private string fileName { get; set; }
+    private string udpEnabled { get; set; }
+    private string udpPort { get; set; }
+    private string udpDestination { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        string? auxCadena = await mvarTopacioClient.getConfiguration();
+        if(null==auxCadena)
+        {
+            fileName = string.Empty;
+            udpEnabled = string.Empty;
+            udpPort = string.Empty;
+            udpDestination = string.Empty;
+        }
+        else
+        {
+            string[] matriz = auxCadena.Split(',');
+            fileName = matriz[0];
+            udpPort = matriz[1];
+            udpDestination = matriz[2];
+            udpEnabled = matriz[3];
+        }
+    }
+    private async Task onRefreshLayoutRequest()
+    {
+        await mvarTopacioClient.LayoutRefreshRequest();
+    }
+}

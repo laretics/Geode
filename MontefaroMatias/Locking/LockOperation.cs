@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using MontefaroMatias.LayoutView.Elements.Portables;
 using System.Xml;
 
 namespace MontefaroMatias.Locking
@@ -141,28 +142,7 @@ namespace MontefaroMatias.Locking
             return true;
         }
     }
-    public class portableOp:PortableElement
-    {
-        public portableOp() : base(255) 
-        { 
-            id=string.Empty;
-            or = string.Empty;
-            ds = string.Empty;
-            sh = string.Empty;
-        }
-        public string id { get; set; } //Código de la orden
-        public string? gr { get; set; } //Grupo
-        public string or { get; set; } //Origin
-        public string ds { get; set; } //Destination
-        public string sh { get; set; } //Indica si la orden es de maniobra o no.   
-    }
 
-    public class portableOrders
-    {
-        public List<portableOp> or { get; set; }
-        public portableOrders()
-        {
-            or = new List<portableOp>();
-        }
-    }
+
+
 }

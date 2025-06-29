@@ -1,4 +1,6 @@
-﻿using MontefaroMatias.LayoutView.Elements;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using MontefaroMatias.LayoutView.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,16 +32,15 @@ namespace MontefaroMatias.LayoutView
         public long Width { get; set; } //Ancho de la vista.
         public long Height { get; set; } //Alto de la vista.
         public string? Comment { get; set; } //Descripción de la vista.
-        public int Scale { get; set; } //Escala de la vista.
+        public float Scale { get; set; } //Escala de la vista.
         public byte IconIndex { get; set; } //Índice del icono de la vista.
-
         public override bool parse(XmlNode node)
         {
             Name = parseString(node, "name");
             Id = parseInt(node, "id");
             X = parseLong(node, "x");
             Y = parseLong(node, "y");
-            Scale = parseInt(node, "scale");
+            Scale = ((float)parseInt(node, "scale"))/100;
             Width = parseLong(node, "w");
             Height = parseLong(node, "h");
             Comment = parseString(node, "comment");

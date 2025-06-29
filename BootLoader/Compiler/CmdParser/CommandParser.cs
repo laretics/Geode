@@ -140,6 +140,7 @@ namespace BootLoader.Compiler.CmdParser
             mcolCommandTokens.Add(new Compile(this));
             mcolCommandTokens.Add(new Upload(this));
             mcolCommandTokens.Add(new Operate(this));
+            mcolCommandTokens.Add(new SVGCompile(this));
         }
     }
 }

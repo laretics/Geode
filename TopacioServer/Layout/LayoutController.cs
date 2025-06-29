@@ -7,6 +7,7 @@ using MontefaroMatias;
 using MontefaroMatias.XML;
 using TopacioServer.Components;
 using MontefaroMatias.Users;
+using System.Text;
 
 namespace TopacioServer.Layout
 {
@@ -22,9 +23,20 @@ namespace TopacioServer.Layout
             salida.MapGet("/ordr", () => getOrders());
             salida.MapGet("/views", () => getViews());
             salida.MapGet("/upd", () => getLastUpdate());
+            salida.MapGet("/conf", () => getConfiguration());
             salida.MapPut("/user", (HttpRequest request) => processUser(request));
             salida.MapPost("/cmd", (HttpRequest request) => processOrder(request));
             salida.MapPost("/occ", (HttpRequest request) => processOccupancy(request));
+            salida.MapPost("/rfh", () => processReload());
+        }
+
+        //Valores de la configuración que voy a leer desde la aplicación principal para ver qué
+        //puede estar fallando en el envío de paquetes UDP
+        private string getConfiguration()
+        {            
+            string salida = string.Format("{0},{1},{2},{3}",
+                mvarKernel.FileName,mvarKernel.UdpPort,mvarKernel.UdpDestination,mvarKernel.UdpEnabled);
+            return salida;
         }
 
         private PortableTopology getTopology()
@@ -81,6 +93,10 @@ namespace TopacioServer.Layout
                 return null;
             }
         }
-
+        private async Task processReload()
+        {
+            //Forzamos la carga desde el XML para depuración rápida.
+            mvarKernel.loadScheme();
+        }
     }
 }

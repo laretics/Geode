@@ -1,5 +1,7 @@
 ﻿using MontefaroMatias.LayoutView.Elements;
 using MontefaroMatias.Locking;
+using MontefaroMatias.LayoutView.Elements.Layout;
+using MontefaroMatias.LayoutView.Elements.Portables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +24,7 @@ namespace MontefaroMatias.LayoutView
             //mcolElements = new List<Element>();
             mcolPlatforms = new List<Platform>();
             mcolSignals = new Dictionary<string, Signal>();
-            mcolCircuits = new Dictionary<string, LayoutUnit>();
+            mcolCircuits = new Dictionary<string, Unit>();
             mcolCrossings = new Dictionary<string, Crossing>();
             mcolOperations = new List<LockOperation>();
             mcolSelectedElements = new List<string>();
@@ -30,7 +32,7 @@ namespace MontefaroMatias.LayoutView
         }
         public static Action? OnUpdateCallback { get; set; }
         internal Dictionary<string,Signal> mcolSignals;
-        internal Dictionary<string, LayoutUnit> mcolCircuits;
+        internal Dictionary<string, Unit> mcolCircuits;
         internal Dictionary<string, Crossing> mcolCrossings;
         internal List<Platform> mcolPlatforms;
         internal List<LockOperation> mcolOperations; //Lista de todas las operaciones posibles en el enclavamiento
@@ -48,7 +50,7 @@ namespace MontefaroMatias.LayoutView
                 List<Element> salida = new List<Element>();
                 foreach (Platform platform in mcolPlatforms) {salida.Add(platform);}
                 foreach(Crossing crossing in mcolCrossings.Values) {salida.Add(crossing);}
-                foreach(LayoutUnit circuit in mcolCircuits.Values) {salida.Add(circuit);}
+                foreach(Unit circuit in mcolCircuits.Values) {salida.Add(circuit);}
                 foreach(Signal signal in mcolSignals.Values) {salida.Add(signal);}
                 return salida;
             }            
@@ -58,13 +60,13 @@ namespace MontefaroMatias.LayoutView
             get
             {
                 Dictionary<string,DynamicElement> salida = new Dictionary<string,DynamicElement>();
-                foreach (LayoutUnit circuit in mcolCircuits.Values)salida.Add(circuit.name,circuit);
+                foreach (Unit circuit in mcolCircuits.Values)salida.Add(circuit.name,circuit);
                 foreach (Signal signal in mcolSignals.Values)salida.Add(signal.name,signal);
                 return salida;
             }
         }
         public Dictionary<string,Signal> Signals { get => mcolSignals; set => mcolSignals = value; }
-        public Dictionary<string,LayoutUnit> Circuits { get => mcolCircuits; set => mcolCircuits = value; }
+        public Dictionary<string,Unit> Circuits { get => mcolCircuits; set => mcolCircuits = value; }
         private List<string> mcolSelectedElements; //Lista de los elementos que están ahora mismo seleccionados
         
         public PortableTopology portableElement
@@ -77,7 +79,7 @@ namespace MontefaroMatias.LayoutView
                     salida.ptf.Add((PortablePlatform)platform.portableElement);
                 foreach(Crossing crossing in mcolCrossings.Values)
                     salida.crs.Add((PortableCrossing)crossing.portableElement);
-                foreach(LayoutUnit layoutUnit in mcolCircuits.Values)
+                foreach(Unit layoutUnit in mcolCircuits.Values)
                     salida.lyt.Add((PortableLayoutUnit)layoutUnit.portableElement);
                 foreach(Signal signal in mcolSignals.Values)
                     salida.sgn.Add((PortableSignal)signal.portableElement);
@@ -106,7 +108,7 @@ namespace MontefaroMatias.LayoutView
                 }
                 foreach (PortableLayoutUnit layoutUnit in topo.lyt)
                 {
-                    LayoutUnit via = new LayoutUnit();
+                    Unit via = new Unit();
                     via.portableElement = layoutUnit;
                     mcolCircuits.Add(via.name, via);
                 }
@@ -139,7 +141,7 @@ namespace MontefaroMatias.LayoutView
                             mcolSignals.Add(nuevaSenal.name, nuevaSenal);
                             break;
                         case "section":
-                            LayoutUnit nuevoLock = new LayoutUnit();
+                            Unit nuevoLock = new Unit();
                             if(!nuevoLock.parse(child)) return false;
                             mcolCircuits.Add(nuevoLock.name, nuevoLock);
                             break;
@@ -234,9 +236,9 @@ namespace MontefaroMatias.LayoutView
         {
             if(mcolCircuits.ContainsKey(circuitId))
             {
-                LayoutUnit auxCircuit = mcolCircuits[circuitId];
-                if (auxCircuit.currentStatus == Common.layoutTraceStatus.ltOccupied)
-                    auxCircuit.currentStatus = Common.layoutTraceStatus.ltFree;
+                Unit auxCircuit = mcolCircuits[circuitId];
+                if (auxCircuit.CurrentStatus == Common.layoutTraceStatus.ltOccupied)
+                    auxCircuit.CurrentStatus = Common.layoutTraceStatus.ltFree;
                 else
                     OccupyCircuit(auxCircuit);
                 doUpdate();
@@ -248,9 +250,9 @@ namespace MontefaroMatias.LayoutView
         /// Además modifica las señales afectadas en caso de que exista alguna.
         /// </summary>
         /// <param name="rhs"></param>
-        public void OccupyCircuit(LayoutUnit rhs)
+        public void OccupyCircuit(Unit rhs)
         {
-            rhs.currentStatus=Common.layoutTraceStatus.ltOccupied;
+            rhs.CurrentStatus=Common.layoutTraceStatus.ltOccupied;
             //Ahora buscamos señales que tengan este circuito como su protegido
             foreach (Signal senal in  mcolSignals.Values)
             {
@@ -288,8 +290,8 @@ namespace MontefaroMatias.LayoutView
                 {
                     if(mcolCircuits.ContainsKey(order.circuitId))
                     {
-                        LayoutUnit unidad = mcolCircuits[order.circuitId];
-                        unidad.currentPosition = order.position;
+                        Unit unidad = mcolCircuits[order.circuitId];
+                        unidad.CurrentPosition = order.position;
                     }
                 }
                 //Cerramos los pasos a nivel afectados
@@ -306,8 +308,8 @@ namespace MontefaroMatias.LayoutView
                 {
                     if(mcolCircuits.ContainsKey(iden))
                     {
-                        LayoutUnit unidad = mcolCircuits[iden];
-                        unidad.currentStatus = Common.layoutTraceStatus.ltLocked;
+                        Unit unidad = mcolCircuits[iden];
+                        unidad.CurrentStatus = Common.layoutTraceStatus.ltLocked;
                     }
                 }
                 //Por último accionamos las señales
@@ -331,8 +333,8 @@ namespace MontefaroMatias.LayoutView
             {
                 if(mcolCircuits.ContainsKey(circ))
                 {
-                    LayoutUnit unidad = mcolCircuits[circ];
-                    if (unidad.currentStatus != Common.layoutTraceStatus.ltFree) return false;
+                    Unit unidad = mcolCircuits[circ];
+                    if (unidad.CurrentStatus != Common.layoutTraceStatus.ltFree) return false;
                 }
             }
             return true;
@@ -346,9 +348,9 @@ namespace MontefaroMatias.LayoutView
                 else
                     setSignalOrder(senal, Common.orderType.toParada);
             }
-            foreach(LayoutUnit cir in mcolCircuits.Values)
+            foreach(Unit cir in mcolCircuits.Values)
             {
-                cir.currentStatus = Common.layoutTraceStatus.ltFree;
+                cir.CurrentStatus = Common.layoutTraceStatus.ltFree;
             }
             foreach(Crossing pn in mcolCrossings.Values)
             {
@@ -364,8 +366,8 @@ namespace MontefaroMatias.LayoutView
             {
                 if (mcolCircuits.ContainsKey(iden))
                 {
-                    LayoutUnit unidad = mcolCircuits[iden];
-                    unidad.currentStatus = Common.layoutTraceStatus.ltFree;
+                    Unit unidad = mcolCircuits[iden];
+                    unidad.CurrentStatus = Common.layoutTraceStatus.ltFree;
                 }
             }
             //Pone las señales en parada
@@ -391,14 +393,14 @@ namespace MontefaroMatias.LayoutView
             foreach (string aux in auxList)
             {
                 if (mcolCircuits.ContainsKey(aux))
-                    mcolCircuits[aux].currentStatus = status;
+                    mcolCircuits[aux].CurrentStatus = status;
             }
         }
         public void ChangePosition(string circuitId, byte newPosition)
         {
             if(mcolCircuits.ContainsKey(circuitId))
             {
-                mcolCircuits[circuitId].currentPosition = newPosition;
+                mcolCircuits[circuitId].CurrentPosition = newPosition;
             }
         }
         public void ChangeCrossing(string crossingId,Common.crossingStatus status)
@@ -412,7 +414,7 @@ namespace MontefaroMatias.LayoutView
         {
             foreach (Signal signal in mcolSignals.Values)
                 signal.HasChanged = false;
-            foreach (LayoutUnit unit in mcolCircuits.Values)
+            foreach (Unit unit in mcolCircuits.Values)
                 unit.HasChanged = false;
             foreach(Crossing cross in mcolCrossings.Values)
                 cross.HasChanged = false;
@@ -421,7 +423,7 @@ namespace MontefaroMatias.LayoutView
         {
             foreach (Signal signal in mcolSignals.Values)
                 signal.selected = false;
-            foreach (LayoutUnit unit in mcolCircuits.Values)
+            foreach (Unit unit in mcolCircuits.Values)
                 unit.selected = false;
             foreach (Crossing cross in mcolCrossings.Values)
                 cross.selected = false;
@@ -440,10 +442,10 @@ namespace MontefaroMatias.LayoutView
             }
             return salida;
         }
-        public List<LayoutUnit> circuitsChanged()
+        public List<Unit> circuitsChanged()
         {
-            List<LayoutUnit> salida = new List<LayoutUnit>();
-            foreach (LayoutUnit circuit in mcolCircuits.Values)
+            List<Unit> salida = new List<Unit>();
+            foreach (Unit circuit in mcolCircuits.Values)
             {
                 if (circuit.HasChanged)
                 {

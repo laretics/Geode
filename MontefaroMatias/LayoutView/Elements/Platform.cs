@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MontefaroMatias.LayoutView.Elements.Portables;
 using System.Xml;
 
 namespace MontefaroMatias.LayoutView.Elements
@@ -14,6 +15,7 @@ namespace MontefaroMatias.LayoutView.Elements
         public Common.Orientation orientation { get; set; }
         public int length { get; set; } //Longitud del andén.
         public Platform():base(){}
+        protected static int ComposeId = 0; //Identificador de composición para este elemento, para evitar colisiones con otros elementos que se puedan crear en el futuro.
 
         public override PortableElement portableElement 
         { 
@@ -41,29 +43,46 @@ namespace MontefaroMatias.LayoutView.Elements
             orientation = parseOrientation(node, "orientation");
             return true;
         }
-        public override bool compose(RenderTreeBuilder builder, View view)
+
+        public override void CompileSVG(SVGRender renderer)
         {
-            if (!base.compose(builder, view)) return false;
+            base.CompileSVG(renderer);
+            renderer.openGroup(string.Format("ptf_{0}", ComposeId++), true);
+            renderer.openGroup("solid", true, "stroke:white;stroke-width:4");
+            switch (orientation)
+            {
+                case Common.Orientation.North:
+                    renderer.line(0, 2, length, 2);
+                    break;
+                case Common.Orientation.South:
+                    renderer.line(0, 6, length, 6);
+                    break;
+                case Common.Orientation.East:
+                    renderer.line(10, 0, 10, length);
+                    break;
+                case Common.Orientation.West:
+                    renderer.line(4, 0, 4, length);
+                    break;
+            }
+            renderer.closeGroup();
+            renderer.openGroup("pattern", true, "stroke:white;stroke-width:4;stroke-dasharray:4,5");
             switch(orientation)
             {
                 case Common.Orientation.North:
-                    addLine(0, 2, length, 2, "white", 4);
-                    addLine(0, 6, length, 6, "white", 4,true);
+                    renderer.line(0, 6, length, 6);
                     break;
                 case Common.Orientation.South:
-                    addLine(0, 2, length, 2, "white", 4, true);
-                    addLine(0, 6, length, 6, "white", 4);                    
+                    renderer.line(0, 2, length, 2);
                     break;
                 case Common.Orientation.East:
-                    addLine(3, 0, 3, length, "white", 4, true);
-                    addLine(10,0,10,length, "white", 4);                    
+                    renderer.line(3, 0, 3, length);
                     break;
                 case Common.Orientation.West:
-                    addLine(4, 0, 4, length, "white", 4);
-                    addLine(11, 0, 11, length, "white", 4, true);
+                    renderer.line(11, 0, 11, length);
                     break;
             }
-            return true;
+            renderer.closeGroup();
+            renderer.closeGroup();
         }
     }
     public class PortablePlatform:PortableElement

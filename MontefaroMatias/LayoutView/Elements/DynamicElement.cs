@@ -25,7 +25,7 @@ namespace MontefaroMatias.LayoutView.Elements
         protected int labelX { get; set; }
         protected int labelY { get; set; }
 
-        public bool selected { get; set; }
+        public bool selected { get; set; }        
 
         protected void openContainerRegion()
         {
