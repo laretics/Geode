@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using MontefaroMatias.LayoutView.Elements.Portables;
 using static MontefaroMatias.Common;
 
 namespace MontefaroMatias.LayoutView.Elements
@@ -18,29 +17,6 @@ namespace MontefaroMatias.LayoutView.Elements
         public string? circuit { get; set; } //Circuito que protege esta señal
         public string? advance { get; set; } //Señal de avanzada de esta señal        
         public Common.Orientation orientation { get; set; }
-
-        public override PortableElement portableElement 
-        { 
-            get
-            {
-                PortableSignal salida = new PortableSignal();
-                salida.setBase(X, Y, name);
-                salida.or = (byte)orientation;
-                salida.sh = shunt;
-                salida.id = id;
-                salida.com = (byte)Order;
-                return salida;
-            }
-        }
-        protected override void deserializeFromPortable(PortableElement rhs)
-        {
-            base.deserializeFromPortable(rhs);
-            PortableSignal xSignal = (PortableSignal)rhs;
-            this.orientation=(Common.Orientation)xSignal.or;
-            this.shunt = xSignal.sh;
-            this.id = xSignal.id;
-            this.Order = (Common.orderType)xSignal.com;
-        }
 
         private Common.orderType mvarOrder;
         public Common.orderType Order 

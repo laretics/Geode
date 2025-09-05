@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MontefaroMatias.LayoutView.Elements.Portables
+namespace MontefaroMatias.LayoutView.Elements.Layout
 {
-    public class PortableTrace : PortableElement
+    internal class Trace
     {
-        public PortableTrace() : base(5)
-        { }
         public int x0 { get; set; }
         public int y0 { get; set; }
         public int x1 { get; set; }

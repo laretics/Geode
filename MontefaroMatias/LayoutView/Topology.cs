@@ -1,7 +1,6 @@
 ﻿using MontefaroMatias.LayoutView.Elements;
 using MontefaroMatias.Locking;
 using MontefaroMatias.LayoutView.Elements.Layout;
-using MontefaroMatias.LayoutView.Elements.Portables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Text.Json.Serialization;
+using MontefaroMatias.Models.Elements;
 
 namespace MontefaroMatias.LayoutView
 {
@@ -69,63 +69,20 @@ namespace MontefaroMatias.LayoutView
         public Dictionary<string,Unit> Circuits { get => mcolCircuits; set => mcolCircuits = value; }
         private List<string> mcolSelectedElements; //Lista de los elementos que están ahora mismo seleccionados
         
-        public PortableTopology portableElement
+        public LayoutModel UDPSnapshot() //Obtiene un fotograma con la posición actual de todo el enclavamiento
         {
-            get
+            LayoutModel salida = new LayoutModel();
+            foreach(Unit circuito in Circuits.Values)
             {
-                PortableTopology salida = new PortableTopology();
-                salida.setBase(0, 0, "Topology");
-                foreach (Platform platform in mcolPlatforms)
-                    salida.ptf.Add((PortablePlatform)platform.portableElement);
-                foreach(Crossing crossing in mcolCrossings.Values)
-                    salida.crs.Add((PortableCrossing)crossing.portableElement);
-                foreach(Unit layoutUnit in mcolCircuits.Values)
-                    salida.lyt.Add((PortableLayoutUnit)layoutUnit.portableElement);
-                foreach(Signal signal in mcolSignals.Values)
-                    salida.sgn.Add((PortableSignal)signal.portableElement);
-                return salida;
+                LayoutUnitModel auxUnit = new LayoutUnitModel();
+                auxUnit.id = circuito.Id;
+                auxUnit.nme = circuito.name;
+                auxUnit.con = circuito.CurrentPosition;
+                auxUnit.stt = (byte)circuito.CurrentStatus;
+                salida.units.Add(auxUnit);
             }
-            set
-            {
-                PortableTopology topo = value; 
-                foreach (PortablePlatform platform in topo.ptf)
-                {
-                    Platform anden = new Platform();
-                    anden.portableElement = platform;
-                    mcolPlatforms.Add(anden);
-                }
-                foreach (PortableCrossing crossing in topo.crs)
-                {
-                    Crossing cruce = new Crossing();
-                    cruce.portableElement = crossing;
-                    mcolCrossings.Add(cruce.name, cruce);
-                }
-                foreach (PortableSignal signal in topo.sgn)
-                {
-                    Signal senal = new Signal();
-                    senal.portableElement = signal;
-                    mcolSignals.Add(senal.name, senal);
-                }
-                foreach (PortableLayoutUnit layoutUnit in topo.lyt)
-                {
-                    Unit via = new Unit();
-                    via.portableElement = layoutUnit;
-                    mcolCircuits.Add(via.name, via);
-                }
-            }
-        }
-        public portableOrders portableOrders
-        {
-            get
-            {
-                portableOrders salida = new portableOrders();
-                foreach (LockOperation order in mcolOperations)
-                {
-                    salida.or.Add(order.portableElement);
-                }               
-                return salida;
-            }
-            set { }
+
+            return salida;
         }
         public bool parse(XmlNode node)
         {
@@ -456,18 +413,5 @@ namespace MontefaroMatias.LayoutView
             return salida;
         }
     }
-    public class PortableTopology:PortableElement
-    {
-        public PortableTopology() : base(7)
-        {
-            ptf = new List<PortablePlatform>();
-            crs = new List<PortableCrossing>();
-            sgn = new List<PortableSignal>();
-            lyt = new List<PortableLayoutUnit>();
-        }
-        public List<PortablePlatform> ptf { get; set; }
-        public List<PortableCrossing> crs { get; set; }
-        public List<PortableSignal> sgn { get; set; }
-        public List<PortableLayoutUnit> lyt { get; set; }
-    }
+
 }

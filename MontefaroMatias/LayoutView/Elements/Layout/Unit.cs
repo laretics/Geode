@@ -6,7 +6,6 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using MontefaroMatias.LayoutView.Elements.Portables;
 
 namespace MontefaroMatias.LayoutView.Elements.Layout
 {
@@ -23,14 +22,14 @@ namespace MontefaroMatias.LayoutView.Elements.Layout
         public Common.layoutTraceStatus CurrentStatus { get; set; } //Estado del trazado de la unidad. 
         private string frogsIndex { get; set; } //Índice de las marmitas asociadas a la unidad. Se usa para el renderizado dinámico.
         internal List<Frog> mcolFrogs { get; private set; } //Lista de marmitas asociadas a la unidad.
-        internal Configuration[] mcolConfigurations { get; private set; }
+        internal StateTraces[] mcolConfigurations { get; private set; }
         internal string[] mcolConfigIndexes { get;private set; }
 
         public Unit() : base()
         {
             mcolFrogs = new List<Frog>();
             frogsIndex = string.Empty; //Inicialmente no hay marmitas asociadas a la unidad.
-            mcolConfigurations = new Configuration[0]; //Inicialmente no hay configuraciones.
+            mcolConfigurations = new StateTraces[0]; //Inicialmente no hay configuraciones.
             mcolConfigIndexes = new string[0]; //Inicialmente no hay configuraciones.
             this.Id = 0;
             this.Enabled = true;
@@ -79,12 +78,12 @@ namespace MontefaroMatias.LayoutView.Elements.Layout
         }
         private bool parseTraces(XmlNode node)
         {
-            List<Configuration> bloque = new List<Configuration>();
+            List<StateTraces> bloque = new List<StateTraces>();
             foreach (XmlNode hijo in node.ChildNodes)
             {
                 if (hijo.NodeType == XmlNodeType.Element && hijo.Name == "v")
                 {
-                    Configuration conf = new Configuration();
+                    StateTraces conf = new StateTraces();
                     if (!conf.parse(hijo)) return false;
                     bloque.Add(conf);
                 }
@@ -109,9 +108,10 @@ namespace MontefaroMatias.LayoutView.Elements.Layout
             renderer.closeGroup();
             mcolConfigIndexes = new string[mcolConfigurations.Length];
             bool primero = true;
-            foreach (Configuration conf in mcolConfigurations)
+            int index = 0;
+            foreach (StateTraces conf in mcolConfigurations)
             {
-                conf.CompileSVGex(renderer,primero);
+                conf.CompileSVGex(renderer,index++,primero);
                 primero = false;
             }
             if (int.MinValue != labelX)
@@ -120,55 +120,5 @@ namespace MontefaroMatias.LayoutView.Elements.Layout
             }
             renderer.closeGroup();
         }
-
-        public override PortableElement portableElement 
-        { 
-            get
-            {
-                PortableLayoutUnit salida = new PortableLayoutUnit();
-                salida.setBase(X, Y, name);
-                salida.ena = this.Enabled;
-                salida.id = this.Id;
-                salida.lbx = this.labelX;
-                salida.lby = this.labelY;
-                foreach (Frog frog in mcolFrogs)
-                    salida.frg.Add(frog.portableFrog);
-                foreach (Configuration conf in mcolConfigurations)
-                    salida.cfg.Add(conf.portable);
-
-                //Nota: los miembros que se refieren a la situación actual serán deserializados en otra estructura.
-                salida.pos = this.CurrentPosition;
-                salida.sta = (byte)this.CurrentStatus;
-
-                return salida;
-            }
-            set => deserializeFromPortable(value);
-        }
-        protected override void deserializeFromPortable(PortableElement rhs)
-        {
-            base.deserializeFromPortable(rhs);
-            if(rhs is PortableLayoutUnit aaa)
-            {
-                Enabled = aaa.ena;
-                Id = aaa.id;
-                labelX = aaa.lbx;
-                labelY = aaa.lby;
-                foreach(PortableFrog auxFrog in aaa.frg)
-                {
-                    Frog frog = new Frog();
-                    frog.portableFrog = auxFrog;
-                    mcolFrogs.Add(frog);
-                }
-                List<Configuration> bloque = new List<Configuration>();
-                foreach (PortableLayoutConfig auxConf in aaa.cfg)
-                {
-                    Configuration conf = new Configuration();
-                    conf.portable = auxConf;
-                    bloque.Add(conf);
-                }
-                mcolConfigurations = bloque.ToArray();
-            }
-        }
-
     }
 }

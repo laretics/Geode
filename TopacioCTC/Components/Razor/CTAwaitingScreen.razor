@@ -1,0 +1,13 @@
+﻿<div class="d-flex flex-column align-items-center justify-content-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+    <div class="fw-bold fs-5 text-secondary">
+        @Message
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? Message { get; set; } = "Por favor, espera. Cargando datos...";
+}

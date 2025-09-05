@@ -1,5 +1,4 @@
 ﻿@inject TopacioClient mvarClient
-@inject StorageService mvarStorage
 @using MontefaroMatias.Users
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -19,13 +18,16 @@
         </div>
         @if(null!=CurrentUser && CurrentUser.Level>0)
         {
-            @foreach (View vista in mvarStorage.Views)
+            if(null!=mcolViews)
             {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="@getHref(vista)">
-                        <span class="bi bi-layout-nav-menu" aria-hidden="true"></span> @vista.Name
-                    </NavLink>
-                </div>
+                @foreach (View vista in mcolViews)
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="@getHref(vista)">
+                            <span class="bi bi-layout-nav-menu" aria-hidden="true"></span> @vista.Name
+                        </NavLink>
+                    </div>
+                }
             }
         }
         @if(null!=CurrentUser && CurrentUser.Level>1)
@@ -44,11 +46,10 @@
     private string getHref(View rhs) => string.Format("layout/{0}", rhs.Id);
     [CascadingParameter]
     public User? CurrentUser { get; set; } = null!;
+    public Views? mcolViews { get; set; } = null!;
     protected async override Task OnInitializedAsync()
     {
-        Views? views = await mvarClient.getViews();        
-        if (null != views)
-            mvarStorage.Views = views;
+        mcolViews = await mvarClient.getViews();        
     }
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 

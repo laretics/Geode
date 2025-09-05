@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MontefaroMatias.LayoutView.Elements.Portables;
 using System.Xml;
 
 namespace MontefaroMatias.Locking
@@ -22,20 +21,6 @@ namespace MontefaroMatias.Locking
         public string origin { get;private set; }
         public string destination { get;private set; }
         public bool shunting { get; private set; } //Indica si la orden es de maniobra o no.
-        public portableOp portableElement
-        {
-            get
-            {
-                portableOp portableOp = new portableOp();
-                portableOp.setBase(0, 0, name);
-                portableOp.id = id;
-                portableOp.gr = groupId;
-                portableOp.or = origin;
-                portableOp.ds = destination;
-                portableOp.sh = shunting ? "1" : "0";
-                return portableOp;
-            }
-        }
 
         public List<string> colKeys { get; private set; } //Lista de elementos donde se hace click para activar la orden.
         public List<string> colPreviousFree { get; private set; } //Lista de circuitos a comprobar que están libres.

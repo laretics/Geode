@@ -1,6 +1,7 @@
 ﻿using MontefaroMatias;
 using MontefaroMatias.LayoutView;
 using MontefaroMatias.Locking;
+using MontefaroMatias.Models.Elements;
 using MontefaroMatias.Users;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -11,19 +12,19 @@ namespace TopacioCTC.Components
     public class TopacioClient:HttpClientBase
     {        
         public TopacioClient(HttpClient httpClient):base (httpClient,"layout") {}
-
-        public async Task<PortableTopology?> getPortableTopology()
+        public async Task<LayoutModel?> getLayoutMessage()
         {
             string request = composeCommand("topo");
             try
             {
                 HttpResponseMessage respuesta = await sendGetRequest(request);
                 HttpContent contenido = respuesta.Content;
-                PortableTopology? salida = await contenido.ReadFromJsonAsync<PortableTopology?>();
+                LayoutModel? salida = await contenido.ReadFromJsonAsync<LayoutModel?>();
                 return salida;
             }
-            catch (Exception e) { return null; }
+            catch(Exception e) { return null; }
         }
+
         public async Task<Views?> getViews()
         {
             string request = composeCommand("views");
@@ -35,18 +36,6 @@ namespace TopacioCTC.Components
                 return salida;
             }
             catch (Exception e) { return null; }
-        }
-        public async Task<portableOrders?> getOrders()
-        {
-            string request = composeCommand("ordr");
-            try
-            {
-                HttpResponseMessage respuesta = await sendGetRequest(request);
-                HttpContent contenido = respuesta.Content;
-                portableOrders? salida = await contenido.ReadFromJsonAsync<portableOrders?>();
-                return salida;
-            }
-            catch(Exception e) { return null; }
         }
 
         public async Task<DateTime> getLastUpdateTime()

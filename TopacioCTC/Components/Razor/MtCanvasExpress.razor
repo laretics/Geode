@@ -1,0 +1,97 @@
+﻿@inject HttpClient mvarHttpClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime mvarJSRuntime
+@if(null==FileName || !mvarFileFound)
+{
+    <CTErrorScreen IsWarning="false" Message="No se ha encontrado el archivo"/>
+}
+else if(null==mvarSVGImage)
+{
+    <CTAwaitingScreen Message="Cargando imagen del enclavamiento"/>
+}
+else
+{
+    <div class="mt-canvas-express-root" id="ctcSVG">
+        @(new MarkupString(mvarSVGImage ?? ""))
+  </div>
+}
+
+@code {
+    //Nuevo control que muestra una imagen SVG estática a la que vamos a ir modificando sus propiedades
+    private string? mvarSVGImage;
+    private bool mvarFileFound = true;
+    private DotNetObjectReference<MtCanvasExpress>? mvarObjReference;
+
+    [Parameter]
+    public string? FileName{ get; set; }
+    [Parameter]
+    public View? View{ get; set; }
+    [Parameter]
+    public EventCallback<string> OnElementClick { get; set; }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            mvarObjReference = DotNetObjectReference.Create(this);
+        }
+        await mvarJSRuntime.InvokeVoidAsync("svgLtyClickInterop.addLtyClickHandlers", "#ctcSVG", mvarObjReference);
+
+    }
+    protected async override Task OnParametersSetAsync()
+    {
+
+        if (string.IsNullOrWhiteSpace(FileName))
+        {
+            mvarFileFound = false;
+            return;
+        }
+
+        try
+        {
+            string auxFileName = $"{NavigationManager.BaseUri}svg/{FileName}.svg";
+            string auxSvgInit = await mvarHttpClient.GetStringAsync(auxFileName);
+            mvarFileFound = true;
+            if (null == View)
+                mvarSVGImage = auxSvgInit;                
+            else
+                mvarSVGImage = auxApplyViewBox(auxSvgInit, View);
+        }
+        catch (Exception ex)
+        {
+            mvarFileFound = false;
+            mvarSVGImage = null;
+        }
+
+    }
+    [JSInvokable]
+    public async Task OnCircuitClick(string groupId)
+    {
+        await OnElementClick.InvokeAsync(groupId);
+    }
+    public void Dispose()
+    {
+        mvarObjReference?.Dispose();
+    }
+
+    private string auxApplyViewBox(string svgInitial, View view)
+    {
+        //Buscamos el tag <svg...>
+        System.Text.RegularExpressions.Match coincidencia = 
+            System.Text.RegularExpressions.Regex.Match(svgInitial, @"<svg[^>]*>");
+
+        string nuevaVista = $"viewBox=\"{view.X} {view.Y} {view.Width} {view.Height}\"";
+
+        string etiqueta = coincidencia.Value;
+        if(etiqueta.Contains("viewBox="))
+        {
+            etiqueta = System.Text.RegularExpressions.Regex.Replace(etiqueta, @"viewBox\s*=\s*""[^""]*""", nuevaVista);
+        }
+        else
+        {
+            etiqueta = etiqueta.TrimEnd('>') + " " + nuevaVista + ">";
+        }
+        return svgInitial.Replace(coincidencia.Value, etiqueta);
+    }
+
+}

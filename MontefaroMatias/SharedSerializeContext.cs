@@ -1,5 +1,4 @@
 ﻿using MontefaroMatias.LayoutView;
-using MontefaroMatias.LayoutView.Elements.Portables;
 using MontefaroMatias.Locking;
 using MontefaroMatias.Users;
 using System;
@@ -13,7 +12,6 @@ namespace MontefaroMatias
 {
     [JsonSerializable(typeof(User))]
     [JsonSerializable(typeof(Views))]
-    [JsonSerializable(typeof(portableOrders))]
     [JsonSerializable(typeof(Topology))]    
     public partial class SharedSerializeContext:JsonSerializerContext
     {

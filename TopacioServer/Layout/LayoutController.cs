@@ -8,6 +8,7 @@ using MontefaroMatias.XML;
 using TopacioServer.Components;
 using MontefaroMatias.Users;
 using System.Text;
+using MontefaroMatias.Models.Elements;
 
 namespace TopacioServer.Layout
 {
@@ -20,7 +21,7 @@ namespace TopacioServer.Layout
             mvarKernel = kernel;
             RouteGroupBuilder? salida = app.MapGroup("layout");
             salida.MapGet("/topo", () => getTopology());
-            salida.MapGet("/ordr", () => getOrders());
+            //salida.MapGet("/ordr", () => getOrders());
             salida.MapGet("/views", () => getViews());
             salida.MapGet("/upd", () => getLastUpdate());
             salida.MapGet("/conf", () => getConfiguration());
@@ -39,16 +40,22 @@ namespace TopacioServer.Layout
             return salida;
         }
 
-        private PortableTopology getTopology()
+        //private PortableTopology getTopology()
+        //{
+        //    PortableTopology salida = mvarKernel.mainSystem.Topology.portableElement;
+        //    return salida;
+        //}
+
+        private LayoutModel getTopology()
         {
-            PortableTopology salida = mvarKernel.mainSystem.Topology.portableElement;
+            LayoutModel salida = mvarKernel.mainSystem.Topology.UDPSnapshot();
             return salida;
         }
-        private portableOrders getOrders()
-        {
-            portableOrders salida = mvarKernel.mainSystem.Topology.portableOrders;
-            return salida;
-        }
+        //private portableOrders getOrders()
+        //{
+        //    portableOrders salida = mvarKernel.mainSystem.Topology.portableOrders;
+        //    return salida;
+        //}
         private string getViews()
         {
             Views vistas = mvarKernel.mainSystem.Views;

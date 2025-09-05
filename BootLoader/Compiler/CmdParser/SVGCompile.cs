@@ -3,6 +3,7 @@ using MontefaroMatias.Compiler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace BootLoader.Compiler.CmdParser
             else
                 mvarResultString = string.Format("SVG file '{0}' generated successfully", compilador.OutputFilename);
         }
-        internal override string sucessString => base.sucessString;
+        internal override string sucessString => mvarResultString;
         internal override string HelpString => string.Format("Compose a basic labeled SVG file for CTC view. If no filename is specified result will be named as '{0}}'",MontefaroMatias.LayoutView.SVGRender.DEFAULT_FILENAME);
         internal override string SyntaxString => string.Format("{0} [filename]", Tokens[0]);
     }

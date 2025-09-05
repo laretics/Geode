@@ -1,0 +1,7 @@
+﻿.ctc-canvas-container {
+    height: 80vh; /* Ocupa toda la altura de la ventana */
+    width: 80vw; /* Opcional: toda la anchura */
+    min-height: 0; /* Evita problemas con flexbox */
+    min-width: 0;
+    overflow: hidden; /* Opcional: oculta desbordamientos */
+}

@@ -6,7 +6,6 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using MontefaroMatias.LayoutView.Elements.Portables;   
 
 namespace MontefaroMatias.LayoutView.Elements
 {
@@ -20,26 +19,6 @@ namespace MontefaroMatias.LayoutView.Elements
         public int length { get; set; } //Longitud del paso a nivel
         public Common.crossingStatus status { get; set; }
 
-        public override PortableElement portableElement 
-        { 
-            get
-            {
-                PortableCrossing salida = new PortableCrossing();
-                salida.setBase(X, Y, name);
-                salida.or = (byte)orientation;
-                salida.l = length;
-                salida.id = id;
-                return salida;
-            }
-        }
-        protected override void deserializeFromPortable(PortableElement rhs)
-        {
-            base.deserializeFromPortable(rhs);
-            PortableCrossing xCrossing = (PortableCrossing)rhs;
-            this.orientation = (Common.Orientation)xCrossing.or;
-            this.length = xCrossing.l;
-            this.id = xCrossing.id;
-        }
 
         public Crossing():base()
         {
@@ -100,13 +79,5 @@ namespace MontefaroMatias.LayoutView.Elements
             }
         }
 
-    }
-    public class PortableCrossing:PortableElement
-    {
-        public PortableCrossing() : base(2)
-        { }
-        public int id { get; set; } //Por si algún día tengo un objeto paso con índice
-        public byte or { get; set; }
-        public int l { get; set; } //Longitud del paso a nivel
     }
 }

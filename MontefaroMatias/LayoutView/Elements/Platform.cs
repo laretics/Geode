@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MontefaroMatias.LayoutView.Elements.Portables;
 using System.Xml;
 
 namespace MontefaroMatias.LayoutView.Elements
@@ -16,25 +15,6 @@ namespace MontefaroMatias.LayoutView.Elements
         public int length { get; set; } //Longitud del andén.
         public Platform():base(){}
         protected static int ComposeId = 0; //Identificador de composición para este elemento, para evitar colisiones con otros elementos que se puedan crear en el futuro.
-
-        public override PortableElement portableElement 
-        { 
-            get
-            {
-                PortablePlatform salida = new PortablePlatform();
-                salida.setBase(X, Y, name);
-                salida.or=(byte)orientation;
-                salida.l = length;                
-                return salida;
-            }           
-        }
-        protected override void deserializeFromPortable(PortableElement rhs)
-        {
-            base.deserializeFromPortable(rhs);
-            PortablePlatform xPlatform = (PortablePlatform) rhs;
-            this.orientation = (Common.Orientation)xPlatform.or;
-            this.length = xPlatform.l;
-        }
 
         public override bool parse(XmlNode node)
         {
@@ -84,12 +64,5 @@ namespace MontefaroMatias.LayoutView.Elements
             renderer.closeGroup();
             renderer.closeGroup();
         }
-    }
-    public class PortablePlatform:PortableElement
-    {
-        public PortablePlatform() : base(1)
-        { }
-        public byte or { get; set; }
-        public int l { get; set; } //Longitud del andén.
     }
 }

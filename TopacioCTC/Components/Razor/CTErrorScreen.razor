@@ -1,0 +1,20 @@
+﻿@if (!string.IsNullOrEmpty(Message))
+{
+    <div class="alert @AlertClass d-flex align-items-center" role="alert">
+        <span class="ct-error-icon @IconClass me-2"></span>
+        <div>
+            @Message
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Message { get; set; }
+
+    [Parameter]
+    public bool IsWarning { get; set; } = false;
+
+    private string AlertClass => IsWarning ? "alert-warning" : "alert-danger";
+    private string IconClass => IsWarning ? "ct-warning" : "ct-error";
+}

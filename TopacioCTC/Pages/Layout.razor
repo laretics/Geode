@@ -4,10 +4,11 @@
 @using MontefaroMatias.Locking
 @using MontefaroMatias.Users
 @inject TopacioClient mvarTopacioClient
-@inject StorageService mvarStorageService
-@inject IJSRuntime mvarJSRuntime
-<div class="d-flex justify-content-center align-items-center bg-black">
-    <MtCanvas View=view StaticView=mvarStorageService.RenderCache/>
+@inject TopacioLayoutService mvarTopacioLayout
+
+<div class="ctc-canvas-container bg-black d-flex justify-content-center align-items-center">
+    @* <MtCanvas View=view StaticView=mvarStorageService.RenderCache/> *@
+    <MtCanvasExpress FileName="ctc" View="@view" OnElementClick="OnElementClick"/>
 </div>
 <div class="container-md">
     <div class="row">
@@ -43,75 +44,48 @@
     public int Id { get; set; }
     [CascadingParameter]
     public User? CurrentUser { get; set; }
+
     private int currentUserLevel { get => (null == CurrentUser) ? 0 : CurrentUser.Level; }
     private MontefaroMatias.LayoutView.Topology mvartt = new Topology();
     private View? view { get; set; } = new View();
-    //private List<Element> mcolDrawables { get; set; } = new List<Element>();
-    private Dictionary<string, DynamicElement> mcolDynamics = new Dictionary<string, DynamicElement>();
     private DynamicElement? mvarOrigin = null;
-    private portableOrders mcolOrders { get; set; } = new portableOrders();
-    //private MontefaroMatias.IpSender auxSender = new IpSender();
-    private List<portableOp> mcolPossibleOrders = new List<portableOp>();
     private bool mvarOccupancyRequested = false;
 
     protected async override Task OnInitializedAsync()
     {
         //En esta rutina de la carga del Layout es donde haré una sola vez la carga de los datos de la topología.
-        if (null == mvarStorageService.RenderCache)
-        {
-            PortableTopology? portaTopo = await mvarTopacioClient.getPortableTopology();
-            MontefaroMatias.LayoutView.Topology auxTopo = new Topology();
-            if (null != portaTopo)
-            {
-                auxTopo.portableElement = portaTopo;
-                mvarStorageService.Topology = auxTopo;
-                mvarStorageService.ComposeRenderCache();                
-            }
-        }
-        portableOrders? auxOrders = await mvarTopacioClient.getOrders();        
-        if (null != auxOrders)
-            mcolOrders = auxOrders;
+        await UpdateTopo();        
+        // portableOrders? auxOrders = await mvarTopacioClient.getOrders();        
+        // if (null != auxOrders)
+        //     mcolOrders = auxOrders;
 
-        DynamicElement.AddElementCallback = clickElement;
-        mvarStorageService.OnUpdateReceived += OnUpdateReceived;
+        //DynamicElement.AddElementCallback = clickElement;
+        //mvarStorageService.OnUpdateReceived += OnUpdateReceived;
     }
+
     protected override async Task OnParametersSetAsync()
     {
-        this.view = mvarStorageService.Views.view(Id);
-    }
-    protected async Task GetTopoAsync()
-    {
-        PortableTopology? portaTopo = await mvarTopacioClient.getPortableTopology();
-        if(null!=portaTopo)
+        Views? auxVistas = await mvarTopacioClient.getViews();
+        if(null!=auxVistas)
         {
-            foreach(PortableSignal sgn in portaTopo.sgn)
-            {
-                if(mvartt.Signals.ContainsKey(sgn.nme))
-                {
-                    Signal senal = mvartt.Signals[sgn.nme];
-                    senal.portableElement = sgn;
-                }                
-            }
-            foreach(PortableLayoutUnit cir in portaTopo.lyt)
-            {
-                if(mvartt.Circuits.ContainsKey(cir.nme))
-                {
-                    Unit circuito = mvartt.Circuits[cir.nme];
-                    circuito.portableElement = cir;
-                }
-            }
+            view = auxVistas.view(Id);
         }
     }
+
+    private async Task OnElementClick(string id)
+    {
+
+    }
+
     /// <summary>
     /// Actualizaremos los colores y la presentación del enclavamiento
     /// </summary>
     /// <returns></returns>
     protected async Task UpdateTopo()
     {
-        foreach (Unit elemento in mvartt.Circuits.Values)
-        {
-            await elemento.RenderDynamic(mvarJSRuntime);
-        }        
+        MontefaroMatias.Models.Elements.LayoutModel? portaTopo = await mvarTopacioClient.getLayoutMessage();
+        StateHasChanged();
+        await mvarTopacioLayout.UpdateCanvasExpress(portaTopo);
     }
     /// <summary>
     /// Este método se activa cada vez que haya recibido alguna notificación
@@ -121,7 +95,6 @@
     /// <returns></returns>
     private async Task OnUpdateReceived()
     {
-        await GetTopoAsync();
         await UpdateTopo();
         //StateHasChanged();
     }
@@ -138,12 +111,12 @@
     {
         mvartt.ClearSelection();
         mvarOrigin = null;
-        mcolPossibleOrders.Clear();
-        foreach (portableOp order in mcolOrders.or)
-        {
-            if (mcolDynamics.ContainsKey(order.or))
-                mcolDynamics[order.or].selected = true;
-        }
+        // mcolPossibleOrders.Clear();
+        // foreach (portableOp order in mcolOrders.or)
+        // {
+        //     if (mcolDynamics.ContainsKey(order.or))
+        //         mcolDynamics[order.or].selected = true;
+        // }
         StateHasChanged();
     }
 
@@ -152,18 +125,18 @@
     /// salta esta función.
     /// </summary>
     /// <param name="id"></param>
-    private void clickElement(string? id)
-    {
-        if(null!=id)
-        {
-            if (mcolDynamics.ContainsKey(id))
-            {
-                DynamicElement element = mcolDynamics[id];
-                if (element.selected)
-                    clickReference(element);
-            }
-        }
-    }
+    // private void clickElement(string? id)
+    // {
+    //     if(null!=id)
+    //     {
+    //         if (mcolDynamics.ContainsKey(id))
+    //         {
+    //             DynamicElement element = mcolDynamics[id];
+    //             if (element.selected)
+    //                 clickReference(element);
+    //         }
+    //     }
+    // }
     private async Task clickReference(DynamicElement rhs)
     {
         mvartt.ClearSelection(); //Primero quitamos las marcas en el enclavamiento
@@ -172,42 +145,42 @@
             mvarOrigin = null;
             await mvarTopacioClient.occupancy(rhs.name);
             mvarOccupancyRequested = false;
-            await GetTopoAsync();
+            await UpdateTopo();
         }
         else
         {
             if (null == mvarOrigin)
             {
                 mvarOrigin = rhs;
-                foreach (portableOp candidate in mcolOrders.or)
-                {
-                    if (candidate.or.Equals(mvarOrigin.name))
-                    {
-                        mcolPossibleOrders.Add(candidate);
-                        //Marcamos el destino de esta orden para su selección.
-                        if (mcolDynamics.ContainsKey(candidate.ds))
-                        {
-                            DynamicElement destino = mcolDynamics[candidate.ds];
-                            destino.selected = true;
-                        }
-                    }
-                }
+                // foreach (portableOp candidate in mcolOrders.or)
+                // {
+                //     if (candidate.or.Equals(mvarOrigin.name))
+                //     {
+                //         mcolPossibleOrders.Add(candidate);
+                //         //Marcamos el destino de esta orden para su selección.
+                //         if (mcolDynamics.ContainsKey(candidate.ds))
+                //         {
+                //             DynamicElement destino = mcolDynamics[candidate.ds];
+                //             destino.selected = true;
+                //         }
+                //     }
+                // }
             }
             else
             {
-                //Buscamos ahora entre las órdenes que tienen el destino en el elemento
-                //seleccionado y encargamos la orden al enclavamiento.
-                foreach (portableOp candidate in mcolPossibleOrders)
-                {
-                    if (candidate.ds.Equals(rhs.name))
-                    {
-                        //Tenemos la orden.
-                        await mvarTopacioClient.processOrder(candidate.id);
-                    }
-                }
+                // //Buscamos ahora entre las órdenes que tienen el destino en el elemento
+                // //seleccionado y encargamos la orden al enclavamiento.
+                // foreach (portableOp candidate in mcolPossibleOrders)
+                // {
+                //     if (candidate.ds.Equals(rhs.name))
+                //     {
+                //         //Tenemos la orden.
+                //         await mvarTopacioClient.processOrder(candidate.id);
+                //     }
+                // }
                 //Tanto si la ha encontrado como si no, volvemos al estado de inicio.
                 mvarOrigin = null;
-                await GetTopoAsync();
+                await UpdateTopo();
             }
         }
 
