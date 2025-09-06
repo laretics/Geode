@@ -17,9 +17,6 @@
     <label class="form-label">Udp address</label>
     <input type="text" class="form-control" id="address" placeholder="@udpDestination" />
 </div>
-<div class="mb-3">
-    <button type="button" class="btn btn-outline-primary" @onclick="@onRefreshLayoutRequest">Refrescar Layout</button>
-</div>
 
 @code {
     private string fileName { get; set; }
@@ -44,9 +41,5 @@
             udpDestination = matriz[2];
             udpEnabled = matriz[3];
         }
-    }
-    private async Task onRefreshLayoutRequest()
-    {
-        await mvarTopacioClient.LayoutRefreshRequest();
     }
 }

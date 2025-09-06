@@ -18,7 +18,7 @@ namespace TopacioCTC.Components
 
         internal string composeUri(string command)
         {
-            return string.Format("/{0}/{1}", controllerId, command);
+            return string.Format("/api/{0}/{1}", controllerId, command);
         }
 
         internal string composeCommand(string command, params requestParam[] arguments)

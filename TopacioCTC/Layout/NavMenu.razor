@@ -49,7 +49,7 @@
     public Views? mcolViews { get; set; } = null!;
     protected async override Task OnInitializedAsync()
     {
-        mcolViews = await mvarClient.getViews();        
+        mcolViews = await mvarClient.getViewsList();
     }
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Text.Json.Serialization;
 using MontefaroMatias.Models.Elements;
+using MontefaroMatias.Models.Orders;
 
 namespace MontefaroMatias.LayoutView
 {
@@ -37,10 +38,8 @@ namespace MontefaroMatias.LayoutView
         internal List<Platform> mcolPlatforms;
         internal List<LockOperation> mcolOperations; //Lista de todas las operaciones posibles en el enclavamiento
         internal List<LockOperation> mcolActiveOperations; //Lista con todas las operaciones que ahora mismo están activas.
-        public DateTime lastUpdate { get; set; }
         private void doUpdate()
         {
-            lastUpdate = DateTime.Now;
             OnUpdateCallback?.Invoke();
         }
         public List<Element> Elements         
@@ -220,12 +219,12 @@ namespace MontefaroMatias.LayoutView
                 }                
             }
         }
-        public bool ExecuteOperation(string operationCMD)
+        public string ExecuteOperation(string operationCMD)
         {
             if (operationCMD.Equals("DAI"))
             {
                 Dai();
-                return true;
+                return string.Empty;
             }                
             else
             {
@@ -235,9 +234,27 @@ namespace MontefaroMatias.LayoutView
                         return ExecuteOperation(operation);
                 }
             }
-            return false;
+            return "Unknown command";
         }
-        public bool ExecuteOperation(LockOperation rhs)
+        public int ExecuteOperations(OrdersModel? rhs)
+        {
+            int salida = 0;
+            if(null!=rhs)
+            {
+                foreach (OrderModel elemento in rhs.ords)
+                {
+                    salida = ExecuteOperation(elemento);
+                    if (salida < 0) return salida; //Terminación anormal.
+                }
+                return 0; //Terminación correcta.
+            }            
+            return -1;
+        }
+        public int ExecuteOperation(OrderModel rhs)
+        {
+            return -1;
+        }
+        public string ExecuteOperation(LockOperation rhs)
         {
             //Primero tenemos que asegurar que el itinerario sea compatible con los previos
             if(areFree(rhs.colPreviousFree))
@@ -282,7 +299,7 @@ namespace MontefaroMatias.LayoutView
                     mcolActiveOperations.Add(rhs);
                 doUpdate();
             }
-            return false;
+            return string.Empty;
         }
         private bool areFree(List<string> circuits)
         {

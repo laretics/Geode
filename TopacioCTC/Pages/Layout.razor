@@ -65,11 +65,10 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Views? auxVistas = await mvarTopacioClient.getViews();
+        //Necesito la lista de las vistas para saber qué parámetros tengo que aplicar cuando seleccione una de ellas.
+        Views? auxVistas = await mvarTopacioClient.getViewsList();
         if(null!=auxVistas)
-        {
             view = auxVistas.view(Id);
-        }
     }
 
     private async Task OnElementClick(string id)
@@ -83,7 +82,7 @@
     /// <returns></returns>
     protected async Task UpdateTopo()
     {
-        MontefaroMatias.Models.Elements.LayoutModel? portaTopo = await mvarTopacioClient.getLayoutMessage();
+        MontefaroMatias.Models.Elements.LayoutModel? portaTopo = await mvarTopacioClient.getLayoutCurrentStatus();
         StateHasChanged();
         await mvarTopacioLayout.UpdateCanvasExpress(portaTopo);
     }
@@ -142,6 +141,7 @@
         mvartt.ClearSelection(); //Primero quitamos las marcas en el enclavamiento
         if(mvarOccupancyRequested)
         {
+
             mvarOrigin = null;
             await mvarTopacioClient.occupancy(rhs.name);
             mvarOccupancyRequested = false;
@@ -189,7 +189,7 @@
     protected async Task OnDai()
     {
         mvartt.Dai();
-        await mvarTopacioClient.processOrder("DAI");
+        await mvarTopacioClient.processTextOrder("DAI");
         mvarOrigin = null;
         StateHasChanged();
     }
