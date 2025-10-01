@@ -28,7 +28,7 @@ namespace TopacioCTC.Authentication
             container.Name = username;
             container.Pwd = password;
             TopacioClient topacioClient = mvarProvider.GetRequiredService<TopacioClient>();
-            User? auxUser = await topacioClient.tryLogin(container);
+            User? auxUser = await topacioClient.Login(container);
             await SetCurrentUser(auxUser);
             return auxUser != null;
         }

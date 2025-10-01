@@ -29,39 +29,9 @@ namespace MontefaroMatias.LayoutView.Elements
             if(!base.parse(node)) return false;
             id = parseInt(node,"id");
             name = parseString(node,"name");
-            orientation = parseOrientation(node, "orientation");
-            length = parseInt(node,"l");
             return true;            
         }
 
-        public override void CompileSVG(SVGRender renderer)
-        {
-            base.CompileSVG(renderer);
-            int mitad = length / 2;
-            int extremo1 = -1 * mitad;
-            int extremo2 = mitad;
-            int cuerno = 8;
-            renderer.openGroup(string.Format("crs_{0}", id), true, $"stroke:red;stroke-width:4");
-            switch (orientation)
-            {
-                case Common.Orientation.North:
-                case Common.Orientation.South:
-                    renderer.line(0, extremo1, 0, extremo2);
-                    renderer.line(-cuerno, extremo1 - cuerno, 0, extremo1);
-                    renderer.line(cuerno, extremo1 - cuerno, 0, extremo1);
-                    renderer.line(-cuerno, extremo2 + cuerno, 0, extremo2);
-                    renderer.line(cuerno, extremo2 + cuerno, 0, extremo2);
-                    break;
-                default:
-                    renderer.line(extremo1, 0, extremo2, 0);
-                    renderer.line(extremo1 - cuerno, -cuerno, extremo1, 0);
-                    renderer.line(extremo1 - cuerno, cuerno, extremo1, 0);
-                    renderer.line(extremo2 + cuerno, -cuerno, extremo2, 0);
-                    renderer.line(extremo2 + cuerno, cuerno, extremo2, 0);
-                    break;
-            }
-            renderer.closeGroup();
-        }
         protected string statusColor
         {
             get
